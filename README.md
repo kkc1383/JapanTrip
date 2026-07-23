@@ -9,4 +9,4 @@
 - 여행 정보 모음
 
 빌드 없는 정적 사이트 + Firebase Realtime Database.
-`main` push 시 GitHub Actions가 문법 검사 후 Vercel로 자동 배포한다.
+`main` push 시 Vercel Git 연동이 자동 배포하고, GitHub Actions는 문법 검사(CI)를 수행한다.
