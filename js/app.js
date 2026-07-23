@@ -1,6 +1,7 @@
 import { db, watchConnection } from './firebase.js';
 import { initItinerary } from './itinerary.js';
 import { initChecklist } from './checklist.js';
+import { initInfo } from './info.js';
 
 const banner = document.getElementById('offline-banner');
 if (!db) {
@@ -10,6 +11,7 @@ if (!db) {
   watchConnection(connected => { banner.hidden = connected; });
   initItinerary();
   initChecklist();
+  initInfo();
 }
 
 document.querySelectorAll('.tab-btn').forEach(btn => {
