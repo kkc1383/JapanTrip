@@ -1,4 +1,5 @@
 import { db, watchConnection } from './firebase.js';
+import { initItinerary } from './itinerary.js';
 
 const banner = document.getElementById('offline-banner');
 if (!db) {
@@ -6,6 +7,7 @@ if (!db) {
   banner.textContent = 'Firebase 설정 필요 — js/firebase-config.js를 확인하세요';
 } else {
   watchConnection(connected => { banner.hidden = connected; });
+  initItinerary();
 }
 
 document.querySelectorAll('.tab-btn').forEach(btn => {

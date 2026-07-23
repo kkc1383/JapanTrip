@@ -18,7 +18,18 @@
     <button class="tab-btn" data-target="panel-info">정보</button>
   </nav>
   <main>
-    <section id="panel-itinerary" class="tab-panel"></section>
+    <section id="panel-itinerary" class="tab-panel">
+      <nav id="day-tabs" class="day-tabs"></nav>
+      <div id="itinerary-list"></div>
+      <form id="itinerary-form" class="add-form">
+        <input name="time" type="time">
+        <input name="title" placeholder="일정 제목 (필수)" required>
+        <input name="place" placeholder="장소">
+        <textarea name="memo" placeholder="메모" rows="2"></textarea>
+        <button type="submit">일정 추가</button>
+        <button type="button" id="itinerary-cancel" class="small" hidden>수정 취소</button>
+      </form>
+    </section>
     <section id="panel-checklist" class="tab-panel" hidden></section>
     <section id="panel-info" class="tab-panel" hidden></section>
   </main>
