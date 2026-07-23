@@ -1,0 +1,6 @@
+.vercel
+.omc/
+${CLAUDE_PLUGIN_DATA}/
+
+.vercel
+.env*

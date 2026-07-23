@@ -1,0 +1,30 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  ci:
+    name: 문법 검사
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: JS 문법 검사
+        run: |
+          for f in js/*.js; do node --check "$f"; done
+
+  deploy:
+    name: Vercel 배포
+    needs: ci
+    runs-on: ubuntu-latest
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Vercel 프로덕션 배포
+        run: npx vercel deploy --prod --yes --token=${{ secrets.VERCEL_TOKEN }}
