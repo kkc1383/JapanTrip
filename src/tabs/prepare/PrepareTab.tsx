@@ -1,5 +1,6 @@
 import BaggageCard from './BaggageCard'
 import CheckinCard from './CheckinCard'
+import EsimCard from './EsimCard'
 import FxSection from './FxSection'
 import InfoCards from './InfoCards'
 import PackingCard from './PackingCard'
@@ -14,6 +15,7 @@ export default function PrepareTab() {
       <FxSection />
       <WeatherCard />
       <VisitJapanCard />
+      <EsimCard />
       <BaggageCard />
       <PackingCard />
       <PassportCard />
