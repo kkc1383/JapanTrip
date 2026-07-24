@@ -19,7 +19,8 @@ export type ChecklistCategory = {
 
 export type InfoCard = { title: string; content: string; order: number }
 
-export type PrepMoney = { wallet?: number; log?: number; cash?: number }
+/** wallet/log는 카드 통합 이전 데이터 호환용 */
+export type PrepMoney = { card?: number; cash?: number; wallet?: number; log?: number }
 
 export type PassportEntry = { name: string; expiry: string; checked: boolean }
 

@@ -6,11 +6,16 @@ import type { PrepMoney } from '../../types'
 
 type FxPoint = { date: string; per100: number }
 
-const MONEY_ROWS: { key: keyof PrepMoney; label: string }[] = [
-  { key: 'wallet', label: '트래블월렛 카드' },
-  { key: 'log', label: '트래블로그 카드' },
+const MONEY_ROWS: { key: 'card' | 'cash'; label: string }[] = [
+  { key: 'card', label: '카드 (트래블월렛·트래블로그 등)' },
   { key: 'cash', label: '현금 (엔화)' },
 ]
+
+/** 카드 통합 이전(wallet/log 분리) 데이터도 합산해서 표시 */
+function rowValue(money: PrepMoney | null, key: 'card' | 'cash'): number {
+  if (key === 'card') return money?.card ?? (money?.wallet ?? 0) + (money?.log ?? 0)
+  return money?.cash ?? 0
+}
 
 function fmt(n: number): string {
   return n.toLocaleString('ko-KR')
@@ -70,7 +75,7 @@ export default function FxSection() {
   const [points, setPoints] = useState<FxPoint[]>([])
   const [failed, setFailed] = useState(false)
   const money = useRtdbValue<PrepMoney>('prep/money')
-  const [editKey, setEditKey] = useState<keyof PrepMoney | null>(null)
+  const [editKey, setEditKey] = useState<'card' | 'cash' | null>(null)
   const [editVal, setEditVal] = useState('')
 
   useEffect(() => {
@@ -96,12 +101,12 @@ export default function FxSection() {
   const prev = points.length > 1 ? points[points.length - 2] : null
   const diff = latest && prev ? latest.per100 - prev.per100 : 0
 
-  const totalJpy = MONEY_ROWS.reduce((s, r) => s + (money?.[r.key] ?? 0), 0)
+  const totalJpy = MONEY_ROWS.reduce((s, r) => s + rowValue(money, r.key), 0)
   const totalKrw = latest ? Math.round((totalJpy * latest.per100) / 100) : null
 
-  function startEdit(key: keyof PrepMoney) {
+  function startEdit(key: 'card' | 'cash') {
     setEditKey(key)
-    setEditVal(String(money?.[key] ?? ''))
+    setEditVal(String(rowValue(money, key) || ''))
   }
 
   function saveEdit(e: FormEvent) {
@@ -147,7 +152,7 @@ export default function FxSection() {
       {/* 준비 금액 */}
       <div className="mt-2 border-t border-dashed border-line px-4 py-3">
         {MONEY_ROWS.map(row => {
-          const val = money?.[row.key] ?? 0
+          const val = rowValue(money, row.key)
           const editing = editKey === row.key
           return (
             <div key={row.key} className="flex items-center justify-between border-b border-dashed border-line/60 py-1.5 last:border-b-0">
