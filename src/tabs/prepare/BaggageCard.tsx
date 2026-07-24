@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { db } from '../../lib/firebase'
 import { useRtdbValue } from '../../hooks/useRtdb'
 import { searchBaggage, VERDICT_LABEL, type BagRule, type BagVerdict } from '../../lib/baggageRules'
-import PrepCard from './PrepCard'
+import PrepCard, { type ByState } from './PrepCard'
 
 const VERDICT_STYLE: Record<BagVerdict, string> = {
   'cabin-ok': 'bg-indigo/10 text-indigo border-indigo/40',
@@ -14,7 +14,8 @@ const VERDICT_STYLE: Record<BagVerdict, string> = {
 }
 
 export default function BaggageCard() {
-  const data = useRtdbValue<{ checked?: boolean }>('prep/baggage')
+  const data = useRtdbValue<{ checked?: boolean; by?: ByState }>('prep/baggage')
+  const by: ByState = data?.by ?? (data?.checked ? { kc: true, yb: true } : {})
   const [q, setQ] = useState('')
   const [results, setResults] = useState<BagRule[] | null>(null)
 
@@ -27,8 +28,8 @@ export default function BaggageCard() {
     <PrepCard
       title="수하물 제한 확인"
       sub="Baggage"
-      checked={data?.checked ?? false}
-      onCheck={v => update(ref(db, 'prep/baggage'), { checked: v })}
+      by={by}
+      onCheckPerson={(p, v) => update(ref(db, 'prep/baggage/by'), { ...by, [p]: v })}
     >
       <ul className="space-y-0.5 text-[12.5px] leading-relaxed text-ink/80">
         <li>· 기내 액체류: 개당 100ml 이하, 1L 지퍼백 1개</li>

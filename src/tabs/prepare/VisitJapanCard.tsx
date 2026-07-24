@@ -1,16 +1,18 @@
 import { ref, update } from 'firebase/database'
 import { db } from '../../lib/firebase'
 import { useRtdbValue } from '../../hooks/useRtdb'
-import PrepCard from './PrepCard'
+import PrepCard, { type ByState } from './PrepCard'
 
 export default function VisitJapanCard() {
-  const data = useRtdbValue<{ checked?: boolean }>('prep/vjw')
+  const data = useRtdbValue<{ checked?: boolean; by?: ByState }>('prep/vjw')
+  // 사람별 체크 도입 이전의 공용 체크는 두 사람 모두에게 이어받음
+  const by: ByState = data?.by ?? (data?.checked ? { kc: true, yb: true } : {})
   return (
     <PrepCard
       title="Visit Japan Web 등록"
       sub="입국 수속"
-      checked={data?.checked ?? false}
-      onCheck={v => update(ref(db, 'prep/vjw'), { checked: v })}
+      by={by}
+      onCheckPerson={(p, v) => update(ref(db, 'prep/vjw/by'), { ...by, [p]: v })}
     >
       <ol className="list-decimal space-y-0.5 pl-4 text-[12.5px] leading-relaxed text-ink/80">
         <li>계정 생성 후 여권·항공편(8/20 출국편) 정보 입력</li>
@@ -25,7 +27,7 @@ export default function VisitJapanCard() {
       >
         Visit Japan Web 열기 ↗
       </a>
-      <p className="mt-2 text-[11px] text-sub">출발 전날까지 등록 권장 · 동행자 전원 각자 등록</p>
+      <p className="mt-2 text-[11px] text-sub">출발 전날까지 등록 권장 · 두 사람 각자 등록해야 해요</p>
     </PrepCard>
   )
 }
