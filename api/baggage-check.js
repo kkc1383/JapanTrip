@@ -35,7 +35,7 @@ export default async function handler(req, res) {
   try {
     const client = new Anthropic() // ANTHROPIC_API_KEY는 Vercel 환경변수에서
     const response = await client.messages.create({
-      model: 'claude-opus-4-8',
+      model: 'claude-sonnet-5',
       max_tokens: 2048,
       thinking: { type: 'adaptive' },
       output_config: {
