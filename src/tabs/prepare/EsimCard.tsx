@@ -5,9 +5,9 @@ import PrepCard, { type ByState } from './PrepCard'
 
 const SHOPS: { name: string; desc: string; url: string }[] = [
   { name: '유심사', desc: '일본 eSIM/유심 특가', url: 'https://www.usimsa.com' },
-  { name: '말톡', desc: '일본 무제한 요금제', url: 'https://www.maltalk.com' },
-  { name: 'Airalo', desc: '글로벌 eSIM, 앱 설치형', url: 'https://www.airalo.com/ko/japan-esim' },
-  { name: '마이리얼트립', desc: '투어·eSIM 묶음 할인', url: 'https://www.myrealtrip.com' },
+  { name: '도시락eSIM', desc: '와이드모바일 운영, 앱 설치 간편', url: 'https://www.dosirakesim.com' },
+  { name: '말톡', desc: '일본 도코모/소프트뱅크 회선', url: 'https://shop.maaltalk.com' },
+  { name: 'Airalo', desc: '글로벌 eSIM, 일본 무제한 팩', url: 'https://www.airalo.com/ko/japan-esim' },
 ]
 
 export default function EsimCard() {
