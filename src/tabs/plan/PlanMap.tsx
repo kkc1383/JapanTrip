@@ -16,10 +16,6 @@ const WISH_COLOR = '#8d8371'
 
 type Mark = { key: string; lat: number; lng: number; color: string; name: string; sub: string }
 
-function xmlEsc(s: string): string {
-  return s.replace(/[<>&'"]/g, c => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', "'": '&apos;', '"': '&quot;' })[c]!)
-}
-
 export default function PlanMap() {
   const itinerary = useRtdbValue<Partial<Record<DayKey, Record<string, ItineraryItem>>>>('itinerary')
   const wishlist = useRtdbValue<Record<string, WishlistItem>>('wishlist')
@@ -47,48 +43,17 @@ export default function PlanMap() {
   }
   const points = marks.map(m => [m.lat, m.lng] as [number, number])
 
-  function downloadKml() {
-    const placemarks = marks
-      .map(
-        m =>
-          `<Placemark><name>${xmlEsc(`[${m.sub}] ${m.name}`)}</name>` +
-          `<Point><coordinates>${m.lng},${m.lat},0</coordinates></Point></Placemark>`,
-      )
-      .join('')
-    const kml =
-      `<?xml version="1.0" encoding="UTF-8"?>` +
-      `<kml xmlns="http://www.opengis.net/kml/2.2"><Document>` +
-      `<name>일본여행 2026.08.20-22</name>${placemarks}</Document></kml>`
-    const blob = new Blob([kml], { type: 'application/vnd.google-earth.kml+xml' })
-    const a = document.createElement('a')
-    a.href = URL.createObjectURL(blob)
-    a.download = 'japantrip-2026.kml'
-    a.click()
-    URL.revokeObjectURL(a.href)
-  }
-
   return (
     <div className="card relative z-0 overflow-hidden !p-0">
       <div className="flex items-center justify-between border-b border-dashed border-line bg-card px-3 py-1.5">
         <span className="font-display text-[12px] tracking-[0.25em] text-indigo">計畫地圖 · PLAN</span>
-        <div className="flex items-center gap-2.5">
-          <button
-            type="button"
-            onClick={downloadKml}
-            disabled={!marks.length}
-            className="text-[10.5px] tracking-wide text-sub underline underline-offset-2 disabled:opacity-40"
-            title="구글 내지도(mymaps.google.com)에서 가져오기로 열 수 있는 파일"
-          >
-            구글 내지도용 KML ↓
-          </button>
-          <button
-            type="button"
-            onClick={() => setExpanded(x => !x)}
-            className="font-display text-[11px] tracking-wider text-accent"
-          >
-            {expanded ? '접기 ▴' : '펼치기 ▾'}
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={() => setExpanded(x => !x)}
+          className="font-display text-[11px] tracking-wider text-accent"
+        >
+          {expanded ? '접기 ▴' : '펼치기 ▾'}
+        </button>
       </div>
       {/* 범례 */}
       <div className="flex items-center gap-3 border-b border-dashed border-line bg-card px-3 py-1 text-[10px] text-sub">
