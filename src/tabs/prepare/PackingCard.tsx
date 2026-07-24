@@ -1,4 +1,5 @@
-import { ref, remove, update } from 'firebase/database'
+import { push, ref, remove, update } from 'firebase/database'
+import { useState, type FormEvent } from 'react'
 import { db } from '../../lib/firebase'
 import { PEOPLE, type PersonKey } from '../../lib/people'
 import { sortByOrder } from '../../lib/sort'
@@ -14,8 +15,26 @@ function isDone(it: ChecklistItem, p: PersonKey): boolean {
 export default function PackingCard() {
   const data = useRtdbValue<Record<string, ChecklistCategory>>('checklist')
   const cats = sortByOrder(data)
+  const [addCat, setAddCat] = useState('')
+  const [addText, setAddText] = useState('')
 
   const allItems = cats.flatMap(([, cat]) => Object.values(cat.items ?? {}))
+
+  function addItem(e: FormEvent) {
+    e.preventDefault()
+    const catId = addCat || cats[0]?.[0]
+    const t = addText.trim()
+    if (!catId || !t) return
+    const items = Object.values(data?.[catId]?.items ?? {})
+    const maxOrder = items.reduce((m, it) => Math.max(m, it.order ?? 0), -1)
+    push(ref(db, `checklist/${catId}/items`), {
+      text: t,
+      checked: false,
+      order: maxOrder + 1,
+      by: { kc: false, yb: false },
+    })
+    setAddText('')
+  }
   const total = allItems.length
   const doneBy = (p: PersonKey) => allItems.filter(it => isDone(it, p)).length
   const allDone = total > 0 && PEOPLE.every(p => doneBy(p.key) === total)
@@ -65,6 +84,29 @@ export default function PackingCard() {
                 <CategoryBlock key={catId} catId={catId} cat={cat} />
               ))}
           </div>
+          {/* 항목 추가 — 카드 전체에 하나 */}
+          <form onSubmit={addItem} className="mt-3 flex gap-1.5 border-t border-dashed border-line pt-2.5">
+            <select
+              value={addCat || cats[0]?.[0] || ''}
+              onChange={e => setAddCat(e.target.value)}
+              className="field w-[92px] flex-none !px-1.5 !py-1.5 text-[12px]"
+            >
+              {cats.map(([id, c]) => (
+                <option key={id} value={id}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+            <input
+              value={addText}
+              onChange={e => setAddText(e.target.value)}
+              placeholder="항목 추가"
+              className="field flex-1 !py-1.5 text-[12.5px]"
+            />
+            <button type="submit" className="btn-soft shrink-0 px-3 text-[12px]">
+              추가
+            </button>
+          </form>
         </>
       )}
     </PrepCard>

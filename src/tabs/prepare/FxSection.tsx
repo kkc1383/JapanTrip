@@ -79,22 +79,42 @@ export default function FxSection() {
   const [editVal, setEditVal] = useState('')
 
   useEffect(() => {
-    const end = new Date()
-    const start = new Date()
-    start.setDate(start.getDate() - 8)
-    // api.frankfurter.app은 CORS 헤더 없는 301을 반환해 브라우저 fetch가 차단됨 — .dev/v1 직접 호출
-    fetch(`https://api.frankfurter.dev/v1/${dateStr(start)}..${dateStr(end)}?from=JPY&to=KRW`)
-      .then(r => r.json())
-      .then((d: { rates?: Record<string, { KRW?: number }> }) => {
-        if (!d.rates) throw new Error('bad response')
-        const pts = Object.entries(d.rates)
-          .map(([date, r]) => ({ date, per100: (r.KRW ?? 0) * 100 }))
-          .filter(p => p.per100 > 0)
-          .sort((a, b) => a.date.localeCompare(b.date))
-        if (!pts.length) throw new Error('empty')
-        setPoints(pts)
-      })
-      .catch(() => setFailed(true))
+    let cancelled = false
+    function load() {
+      const end = new Date()
+      const start = new Date()
+      start.setDate(start.getDate() - 8)
+      // api.frankfurter.app은 CORS 헤더 없는 301을 반환해 브라우저 fetch가 차단됨 — .dev/v1 직접 호출
+      fetch(`https://api.frankfurter.dev/v1/${dateStr(start)}..${dateStr(end)}?from=JPY&to=KRW`)
+        .then(r => r.json())
+        .then((d: { rates?: Record<string, { KRW?: number }> }) => {
+          if (!d.rates) throw new Error('bad response')
+          const pts = Object.entries(d.rates)
+            .map(([date, r]) => ({ date, per100: (r.KRW ?? 0) * 100 }))
+            .filter(p => p.per100 > 0)
+            .sort((a, b) => a.date.localeCompare(b.date))
+          if (!pts.length) throw new Error('empty')
+          if (!cancelled) {
+            setPoints(pts)
+            setFailed(false)
+          }
+        })
+        .catch(() => {
+          if (!cancelled) setFailed(true)
+        })
+    }
+    load()
+    // 앱을 켜둔 동안 1시간마다, 화면에 다시 돌아올 때마다 갱신
+    const id = setInterval(load, 60 * 60_000)
+    const onVis = () => {
+      if (document.visibilityState === 'visible') load()
+    }
+    document.addEventListener('visibilitychange', onVis)
+    return () => {
+      cancelled = true
+      clearInterval(id)
+      document.removeEventListener('visibilitychange', onVis)
+    }
   }, [])
 
   const latest = points.length ? points[points.length - 1] : null

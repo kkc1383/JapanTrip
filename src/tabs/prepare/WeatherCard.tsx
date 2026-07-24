@@ -33,35 +33,57 @@ export default function WeatherCard() {
   const [isNormal, setIsNormal] = useState(false)
 
   useEffect(() => {
-    Promise.all(
-      CITIES.map(async c => {
-        const url =
-          `https://api.open-meteo.com/v1/forecast?latitude=${c.lat}&longitude=${c.lon}` +
-          `&daily=temperature_2m_max,temperature_2m_min,weather_code` +
-          `&timezone=${encodeURIComponent(c.tz)}&start_date=${DATES[0]}&end_date=${DATES[2]}`
-        const r = await fetch(url)
-        if (!r.ok) throw new Error('out of range')
-        const d = (await r.json()) as {
-          daily?: { time: string[]; temperature_2m_max: number[]; temperature_2m_min: number[]; weather_code: number[] }
-        }
-        if (!d.daily?.time?.length) throw new Error('no data')
-        return {
-          name: c.name,
-          days: d.daily.time.map((date, i) => ({
-            date,
-            max: Math.round(d.daily!.temperature_2m_max[i]),
-            min: Math.round(d.daily!.temperature_2m_min[i]),
-            code: d.daily!.weather_code[i],
-          })),
-        }
-      }),
-    )
-      .then(setCities)
-      .catch(() => {
-        // 아직 예보 범위 밖 — 평년값으로 표시
-        setCities(CITIES.map(c => ({ name: c.name, days: NORMALS[c.name] })))
-        setIsNormal(true)
-      })
+    let cancelled = false
+    function load() {
+      Promise.all(
+        CITIES.map(async c => {
+          const url =
+            `https://api.open-meteo.com/v1/forecast?latitude=${c.lat}&longitude=${c.lon}` +
+            `&daily=temperature_2m_max,temperature_2m_min,weather_code` +
+            `&timezone=${encodeURIComponent(c.tz)}&start_date=${DATES[0]}&end_date=${DATES[2]}`
+          const r = await fetch(url)
+          if (!r.ok) throw new Error('out of range')
+          const d = (await r.json()) as {
+            daily?: { time: string[]; temperature_2m_max: number[]; temperature_2m_min: number[]; weather_code: number[] }
+          }
+          if (!d.daily?.time?.length) throw new Error('no data')
+          return {
+            name: c.name,
+            days: d.daily.time.map((date, i) => ({
+              date,
+              max: Math.round(d.daily!.temperature_2m_max[i]),
+              min: Math.round(d.daily!.temperature_2m_min[i]),
+              code: d.daily!.weather_code[i],
+            })),
+          }
+        }),
+      )
+        .then(cs => {
+          if (!cancelled) {
+            setCities(cs)
+            setIsNormal(false)
+          }
+        })
+        .catch(() => {
+          // 아직 예보 범위 밖 — 평년값으로 표시
+          if (!cancelled) {
+            setCities(CITIES.map(c => ({ name: c.name, days: NORMALS[c.name] })))
+            setIsNormal(true)
+          }
+        })
+    }
+    load()
+    // 앱을 켜둔 동안 1시간마다, 화면에 다시 돌아올 때마다 갱신
+    const id = setInterval(load, 60 * 60_000)
+    const onVis = () => {
+      if (document.visibilityState === 'visible') load()
+    }
+    document.addEventListener('visibilitychange', onVis)
+    return () => {
+      cancelled = true
+      clearInterval(id)
+      document.removeEventListener('visibilitychange', onVis)
+    }
   }, [])
 
   return (

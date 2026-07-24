@@ -13,15 +13,48 @@ const VERDICT_STYLE: Record<BagVerdict, string> = {
   forbidden: 'bg-accent-soft text-accent border-accent/40',
 }
 
+type AiState =
+  | { status: 'idle' }
+  | { status: 'loading' }
+  | { status: 'done'; verdict: string }
+  | { status: 'error' }
+
+const AI_VERDICT_STYLE: Record<string, string> = {
+  '기내, 수하 가능': 'bg-indigo/10 text-indigo border-indigo/40',
+  '기내만 가능': 'bg-indigo/10 text-indigo border-indigo/40',
+  '수하만 가능': 'bg-gold/10 text-gold border-gold/40',
+  불가능: 'bg-accent-soft text-accent border-accent/40',
+}
+
 export default function BaggageCard() {
   const data = useRtdbValue<{ checked?: boolean; by?: ByState }>('prep/baggage')
   const by: ByState = data?.by ?? (data?.checked ? { kc: true, yb: true } : {})
   const [q, setQ] = useState('')
   const [results, setResults] = useState<BagRule[] | null>(null)
+  const [ai, setAi] = useState<AiState>({ status: 'idle' })
 
   function doSearch(text: string) {
     setQ(text)
     setResults(text.trim() ? searchBaggage(text) : null)
+    setAi({ status: 'idle' })
+  }
+
+  async function askAi() {
+    const item = q.trim()
+    if (!item || ai.status === 'loading') return
+    setAi({ status: 'loading' })
+    try {
+      const r = await fetch('/api/baggage-check', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ item }),
+      })
+      const d = (await r.json()) as { verdict?: string }
+      if (!r.ok || !d.verdict) throw new Error('bad response')
+      setAi({ status: 'done', verdict: d.verdict })
+    } catch {
+      setAi({ status: 'error' })
+    }
   }
 
   return (
@@ -53,7 +86,7 @@ export default function BaggageCard() {
           <div className="mt-2 space-y-1.5">
             {results.length === 0 && (
               <p className="text-[11.5px] leading-relaxed text-sub">
-                목록에 없는 품목이에요 —{' '}
+                목록에 없는 품목이에요 — 아래 AI 판정을 써보거나{' '}
                 <a
                   href="https://www.avsec365.or.kr"
                   target="_blank"
@@ -74,6 +107,27 @@ export default function BaggageCard() {
                 </span>
               </div>
             ))}
+          </div>
+        )}
+        {/* AI 판정 */}
+        {q.trim() && (
+          <div className="mt-2 flex items-center gap-2">
+            <button
+              type="button"
+              onClick={askAi}
+              disabled={ai.status === 'loading'}
+              className="btn-soft px-2.5 py-1 text-[11.5px] disabled:opacity-50"
+            >
+              {ai.status === 'loading' ? '🤖 판정 중...' : '🤖 AI 판정'}
+            </button>
+            {ai.status === 'done' && (
+              <span className={`rounded-sm border px-2 py-0.5 text-[11px] font-bold ${AI_VERDICT_STYLE[ai.verdict] ?? ''}`}>
+                {ai.verdict}
+              </span>
+            )}
+            {ai.status === 'error' && (
+              <span className="text-[11px] text-sub">판정 실패 — 잠시 후 다시 시도</span>
+            )}
           </div>
         )}
       </div>

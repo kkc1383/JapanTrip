@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.114.0",
     "firebase": "^12.16.0",
     "leaflet": "^1.9.4",
     "react": "^19.2.8",
