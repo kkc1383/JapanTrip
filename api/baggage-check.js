@@ -39,7 +39,7 @@ export default async function handler(req, res) {
       max_tokens: 2048,
       thinking: { type: 'adaptive' },
       output_config: {
-        effort: 'low',
+        effort: 'high',
         format: {
           type: 'json_schema',
           schema: {
@@ -51,7 +51,13 @@ export default async function handler(req, res) {
         },
       },
       system: SYSTEM,
-      messages: [{ role: 'user', content: item }],
+      messages: [
+        { role: 'user', content: '보조배터리' },
+        { role: 'assistant', content: '{"verdict":"기내만 가능"}' },
+        { role: 'user', content: '와인 한 병' },
+        { role: 'assistant', content: '{"verdict":"수하만 가능"}' },
+        { role: 'user', content: item },
+      ],
     })
 
     if (response.stop_reason === 'refusal') {
