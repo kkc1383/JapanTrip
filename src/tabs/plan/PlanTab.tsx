@@ -1,13 +1,17 @@
-import { useState } from 'react'
+import { lazy, Suspense, useState } from 'react'
 import ItinerarySection from './ItinerarySection'
-import PlanMap from './PlanMap'
 import Wishlist from './Wishlist'
+
+// Leaflet 번들이 커서 지도는 필요할 때만 로드
+const PlanMap = lazy(() => import('./PlanMap'))
 
 export default function PlanTab() {
   const [seg, setSeg] = useState<'itinerary' | 'wishlist'>('itinerary')
   return (
     <div className="stagger space-y-4">
-      <PlanMap />
+      <Suspense fallback={<div className="card flex h-52 items-center justify-center text-[12px] text-sub">지도 불러오는 중...</div>}>
+        <PlanMap />
+      </Suspense>
       <div className="segment">
         <button
           type="button"

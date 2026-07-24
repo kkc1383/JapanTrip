@@ -121,6 +121,7 @@ export default function ItinerarySection() {
                   label: '삭제',
                   danger: true,
                   onClick: () => {
+                    if (!window.confirm(`'${it.title}' 일정을 삭제할까요?`)) return
                     remove(ref(db, `itinerary/${day}/${id}`))
                     if (editingId === id) closeSheet()
                   },

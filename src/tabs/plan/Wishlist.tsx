@@ -77,7 +77,15 @@ export default function Wishlist() {
           <div className="flex items-start justify-between gap-2">
             <div className="font-display text-[15px] tracking-wide">{it.title}</div>
             <ActionMenu
-              actions={[{ label: '삭제', danger: true, onClick: () => remove(ref(db, `wishlist/${id}`)) }]}
+              actions={[
+                {
+                  label: '삭제',
+                  danger: true,
+                  onClick: () => {
+                    if (window.confirm(`'${it.title}' 후보를 삭제할까요?`)) remove(ref(db, `wishlist/${id}`))
+                  },
+                },
+              ]}
             />
           </div>
           {it.place && (

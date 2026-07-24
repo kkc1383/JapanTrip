@@ -140,7 +140,9 @@ function CategoryBlock({ catId, cat }: { catId: string; cat: ChecklistCategory }
               </span>
             ))}
             <button
-              onClick={() => remove(ref(db, `checklist/${catId}/items/${itemId}`))}
+              onClick={() => {
+                if (window.confirm(`'${it.text}' 항목을 삭제할까요?`)) remove(ref(db, `checklist/${catId}/items/${itemId}`))
+              }}
               className="w-6 text-center text-[13px] text-sub/50 transition-colors hover:text-accent"
               aria-label="삭제"
             >

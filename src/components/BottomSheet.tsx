@@ -31,7 +31,7 @@ export default function BottomSheet({
   return createPortal(
     <div className="fixed inset-0 z-40">
       <div className="dim absolute inset-0 bg-ink/45" onClick={onClose} />
-      <div className="sheet absolute inset-x-0 bottom-0 mx-auto max-h-[85dvh] max-w-xl overflow-y-auto rounded-t-xl border-x border-t-2 border-ink/30 bg-bg px-5 pt-3 pb-8">
+      <div className="sheet absolute inset-x-0 bottom-0 mx-auto max-h-[85dvh] max-w-xl overflow-y-auto rounded-t-xl border-x border-t-2 border-ink/30 bg-bg px-5 pt-3 pb-[calc(2rem+env(safe-area-inset-bottom))]">
         {/* 절취선 핸들 */}
         <div className="mx-auto mb-3 h-1 w-12 rounded-full bg-ink/20" />
         <div className="mb-4 flex items-center justify-between border-b border-dashed border-line pb-2.5">

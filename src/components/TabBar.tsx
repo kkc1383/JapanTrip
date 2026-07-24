@@ -14,7 +14,7 @@ export default function TabBar({
   onChange: (t: TabKey) => void
 }) {
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-20 border-t-2 border-ink/70 bg-card/95 backdrop-blur">
+    <nav className="fixed inset-x-0 bottom-0 z-20 border-t-2 border-ink/70 bg-card/95 pb-[env(safe-area-inset-bottom)] backdrop-blur">
       <div className="mx-auto flex max-w-xl">
         {TABS.map(t => {
           const active = tab === t.key

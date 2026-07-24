@@ -1,4 +1,4 @@
-import { push, ref } from 'firebase/database'
+import { get, push, ref } from 'firebase/database'
 import { useEffect, useRef, useState } from 'react'
 import { db } from '../../lib/firebase'
 import { sortByOrder } from '../../lib/sort'
@@ -50,17 +50,21 @@ export default function DiscoverFeed() {
 
   if (!posts.length) return null
 
-  function save(id: string, p: Post) {
+  async function save(id: string, p: Post) {
     if (saved[id]) return
+    setSaved(s => ({ ...s, [id]: true }))
+    // 직접 추가와 같은 규칙(maxOrder+1)으로 정렬값 부여
+    const snap = await get(ref(db, 'wishlist'))
+    const existing = Object.values((snap.val() ?? {}) as Record<string, { order?: number }>)
+    const maxOrder = existing.reduce((m, it) => Math.max(m, it.order ?? 0), -1)
     push(ref(db, 'wishlist'), {
       title: p.title,
       place: '',
       memo: `📌 저장한 포스트 — ${p.source}\n${p.url}`,
       lat: null,
       lng: null,
-      order: Date.now(),
+      order: maxOrder + 1,
     })
-    setSaved(s => ({ ...s, [id]: true }))
   }
 
   return (

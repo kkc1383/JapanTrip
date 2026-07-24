@@ -80,6 +80,7 @@ export default function InfoCards() {
                   label: '삭제',
                   danger: true,
                   onClick: () => {
+                    if (!window.confirm(`'${c.title}' 카드를 삭제할까요?`)) return
                     remove(ref(db, `info/${id}`))
                     if (editingId === id) closeSheet()
                   },
