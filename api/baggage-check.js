@@ -67,11 +67,14 @@ export default async function handler(req, res) {
     const debug =
       req.query && req.query.debug
         ? {
-            v: 3,
+            v: 4,
             stop: response.stop_reason,
             model: response.model,
             blocks: response.content.map(b => b.type).join(','),
             out_tokens: response.usage && response.usage.output_tokens,
+            in_tokens: response.usage && response.usage.input_tokens,
+            sys_len: SYSTEM.length,
+            sys_head: SYSTEM.slice(0, 40),
           }
         : undefined
     res.status(200).json(debug ? { verdict, debug } : { verdict })
