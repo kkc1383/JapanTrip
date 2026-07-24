@@ -16,6 +16,7 @@ export default function Wishlist() {
   const [memo, setMemo] = useState('')
   const [coords, setCoords] = useState<Coords>(null)
   const [movingId, setMovingId] = useState<string | null>(null)
+  const [moving, setMoving] = useState(false)
   const [formEpoch, setFormEpoch] = useState(0)
 
   function submit(e: FormEvent) {
@@ -35,20 +36,26 @@ export default function Wishlist() {
   }
 
   async function moveToDay(id: string, it: WishlistItem, day: DayKey) {
-    const snap = await get(ref(db, `itinerary/${day}`))
-    const existing = (snap.val() ?? {}) as Record<string, ItineraryItem>
-    const maxOrder = Object.values(existing).reduce((m, i) => Math.max(m, i.order ?? 0), -1)
-    await push(ref(db, `itinerary/${day}`), {
-      time: '',
-      title: it.title,
-      place: it.place ?? '',
-      memo: it.memo ?? '',
-      lat: it.lat ?? null,
-      lng: it.lng ?? null,
-      order: maxOrder + 1,
-    })
-    await remove(ref(db, `wishlist/${id}`))
-    setMovingId(null)
+    if (moving) return
+    setMoving(true)
+    try {
+      const snap = await get(ref(db, `itinerary/${day}`))
+      const existing = (snap.val() ?? {}) as Record<string, ItineraryItem>
+      const maxOrder = Object.values(existing).reduce((m, i) => Math.max(m, i.order ?? 0), -1)
+      await push(ref(db, `itinerary/${day}`), {
+        time: '',
+        title: it.title,
+        place: it.place ?? '',
+        memo: it.memo ?? '',
+        lat: it.lat ?? null,
+        lng: it.lng ?? null,
+        order: maxOrder + 1,
+      })
+      await remove(ref(db, `wishlist/${id}`))
+    } finally {
+      setMoving(false)
+      setMovingId(null)
+    }
   }
 
   return (
@@ -77,7 +84,7 @@ export default function Wishlist() {
               <>
                 <span>어느 날로?</span>
                 {DAYS.map(d => (
-                  <button key={d.key} onClick={() => moveToDay(id, it, d.key)} className="font-semibold text-accent">
+                  <button key={d.key} onClick={() => moveToDay(id, it, d.key)} disabled={moving} className="font-semibold text-accent disabled:opacity-50">
                     {d.label}
                   </button>
                 ))}
