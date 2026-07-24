@@ -77,7 +77,8 @@ export default function FxSection() {
     const end = new Date()
     const start = new Date()
     start.setDate(start.getDate() - 8)
-    fetch(`https://api.frankfurter.app/${dateStr(start)}..${dateStr(end)}?from=JPY&to=KRW`)
+    // api.frankfurter.app은 CORS 헤더 없는 301을 반환해 브라우저 fetch가 차단됨 — .dev/v1 직접 호출
+    fetch(`https://api.frankfurter.dev/v1/${dateStr(start)}..${dateStr(end)}?from=JPY&to=KRW`)
       .then(r => r.json())
       .then((d: { rates?: Record<string, { KRW?: number }> }) => {
         if (!d.rates) throw new Error('bad response')
