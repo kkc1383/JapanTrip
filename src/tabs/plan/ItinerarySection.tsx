@@ -3,7 +3,6 @@ import { useState, type FormEvent } from 'react'
 import ActionMenu from '../../components/ActionMenu'
 import BottomSheet from '../../components/BottomSheet'
 import DayTabs from '../../components/DayTabs'
-import Fab from '../../components/Fab'
 import PlaceSearchInput, { type Coords } from '../../components/PlaceSearchInput'
 import { db } from '../../lib/firebase'
 import { placeSearchUrl } from '../../lib/googleMaps'
@@ -89,7 +88,7 @@ export default function ItinerarySection() {
     <div className="space-y-3.5">
       <DayTabs day={day} onChange={d => { setDay(d); resetForm() }} />
       {!items.length && (
-        <p className="empty-box">아직 일정이 없어요 — 오른쪽 아래 ＋ 버튼으로 추가해 보세요</p>
+        <p className="empty-box">아직 일정이 없어요 — 아래 ＋ 버튼으로 추가해 보세요</p>
       )}
       {items.map(([id, it], idx) => (
         <div key={id} className="card flex items-stretch overflow-hidden">
@@ -132,7 +131,13 @@ export default function ItinerarySection() {
         </div>
       ))}
 
-      <Fab label="일정 추가" onClick={openAdd} />
+      <button
+        type="button"
+        onClick={openAdd}
+        className="empty-box w-full !py-3 transition-colors hover:border-accent hover:text-accent"
+      >
+        ＋ 일정 추가
+      </button>
 
       <BottomSheet open={sheetOpen} title={editingId ? '일정 수정' : '새 일정'} onClose={closeSheet}>
         <form onSubmit={submit} className="grid gap-2.5">

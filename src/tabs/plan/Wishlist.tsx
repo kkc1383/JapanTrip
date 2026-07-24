@@ -2,8 +2,8 @@ import { get, push, ref, remove } from 'firebase/database'
 import { useState, type FormEvent } from 'react'
 import ActionMenu from '../../components/ActionMenu'
 import BottomSheet from '../../components/BottomSheet'
-import Fab from '../../components/Fab'
 import PlaceSearchInput, { type Coords } from '../../components/PlaceSearchInput'
+import DiscoverFeed from './DiscoverFeed'
 import { DAYS } from '../../lib/dates'
 import { db } from '../../lib/firebase'
 import { placeSearchUrl } from '../../lib/googleMaps'
@@ -117,7 +117,24 @@ export default function Wishlist() {
         </div>
       ))}
 
-      <Fab label="후보 추가" onClick={() => setSheetOpen(true)} />
+      <button
+        type="button"
+        onClick={() => setSheetOpen(true)}
+        className="empty-box w-full !py-3 transition-colors hover:border-accent hover:text-accent"
+      >
+        ＋ 후보 추가
+      </button>
+
+      {/* 샤오홍슈 스타일 도쿄 여행 아이디어 피드 */}
+      <div className="pt-2">
+        <div className="mb-2 flex items-baseline gap-2">
+          <span className="inline-block size-2 shrink-0 rotate-45 bg-accent" />
+          <h3 className="font-display text-[15px]">도쿄 여행 아이디어</h3>
+          <span className="text-[9px] font-semibold tracking-[0.25em] text-gold uppercase">Feed</span>
+          <span className="ml-1 h-px flex-1 bg-line" />
+        </div>
+        <DiscoverFeed />
+      </div>
 
       <BottomSheet open={sheetOpen} title="가고 싶은 곳 추가" onClose={closeSheet}>
         <form onSubmit={submit} className="grid gap-2.5">

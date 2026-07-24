@@ -220,31 +220,6 @@ body::after {
 
   .tab-in { animation: rise 0.35s cubic-bezier(0.2, 0.7, 0.3, 1) both; }
 
-  /* 플로팅 추가 버튼 */
-  .fab {
-    position: fixed;
-    bottom: 88px;
-    right: max(20px, calc(50vw - 18rem + 20px));
-    z-index: 30;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-family: var(--font-display);
-    font-weight: 700;
-    font-size: 14px;
-    letter-spacing: 0.02em;
-    background: var(--color-accent);
-    color: #fff6e9;
-    border-radius: 999px;
-    padding: 12px 18px;
-    box-shadow: 3px 3px 0 color-mix(in srgb, var(--color-ink) 30%, transparent);
-    transition: transform 0.08s, box-shadow 0.08s;
-  }
-  .fab:active {
-    transform: translate(2px, 2px);
-    box-shadow: 1px 1px 0 color-mix(in srgb, var(--color-ink) 30%, transparent);
-  }
-
   .dim { animation: dim-in 0.2s both; }
   .sheet { animation: sheet-up 0.28s cubic-bezier(0.2, 0.7, 0.3, 1) both; }
 
