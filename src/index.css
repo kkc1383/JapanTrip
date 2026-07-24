@@ -191,7 +191,6 @@ body::after {
   .stamp-check:checked {
     background: var(--color-accent);
     border-color: var(--color-accent);
-    transform: rotate(-6deg);
   }
   .stamp-check.check-yb:checked {
     background: var(--color-indigo);
