@@ -32,6 +32,8 @@ export default function BaggageCard() {
       onCheckPerson={(p, v) => update(ref(db, 'prep/baggage/by'), { ...by, [p]: v })}
     >
       <ul className="space-y-0.5 text-[12.5px] leading-relaxed text-ink/80">
+        <li>· <b>제주항공 기내: 10kg</b> — 세 변 합 115cm 이내 (예: 55×40×20cm)</li>
+        <li>· <b>제주항공 위탁: 15kg</b> — 초과 시 kg당 추가 요금</li>
         <li>· 기내 액체류: 개당 100ml 이하, 1L 지퍼백 1개</li>
         <li>· 보조배터리·전자담배: <b className="text-accent">위탁 금지, 기내만</b></li>
         <li>· 칼·가위 등 날붙이: 위탁수하물로</li>

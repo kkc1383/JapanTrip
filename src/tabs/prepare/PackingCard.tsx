@@ -1,5 +1,4 @@
-import { push, ref, remove, update } from 'firebase/database'
-import { useState, type FormEvent } from 'react'
+import { ref, remove, update } from 'firebase/database'
 import { db } from '../../lib/firebase'
 import { PEOPLE, type PersonKey } from '../../lib/people'
 import { sortByOrder } from '../../lib/sort'
@@ -60,9 +59,11 @@ export default function PackingCard() {
             ))}
           </div>
           <div className="space-y-3">
-            {cats.map(([catId, cat]) => (
-              <CategoryBlock key={catId} catId={catId} cat={cat} />
-            ))}
+            {cats
+              .filter(([, cat]) => Object.keys(cat.items ?? {}).length > 0)
+              .map(([catId, cat]) => (
+                <CategoryBlock key={catId} catId={catId} cat={cat} />
+              ))}
           </div>
         </>
       )}
@@ -71,22 +72,7 @@ export default function PackingCard() {
 }
 
 function CategoryBlock({ catId, cat }: { catId: string; cat: ChecklistCategory }) {
-  const [text, setText] = useState('')
   const items = sortByOrder(cat.items)
-
-  function addItem(e: FormEvent) {
-    e.preventDefault()
-    const t = text.trim()
-    if (!t) return
-    const maxOrder = items.reduce((m, [, it]) => Math.max(m, it.order ?? 0), -1)
-    push(ref(db, `checklist/${catId}/items`), {
-      text: t,
-      checked: false,
-      order: maxOrder + 1,
-      by: { kc: false, yb: false },
-    })
-    setText('')
-  }
 
   return (
     <div>
@@ -121,17 +107,6 @@ function CategoryBlock({ catId, cat }: { catId: string; cat: ChecklistCategory }
           </div>
         )
       })}
-      <form onSubmit={addItem} className="mt-1.5 flex gap-1.5">
-        <input
-          value={text}
-          onChange={e => setText(e.target.value)}
-          placeholder="항목 추가"
-          className="field flex-1 !py-1.5 text-[12.5px]"
-        />
-        <button type="submit" className="btn-soft shrink-0 px-3 text-[12px]">
-          추가
-        </button>
-      </form>
     </div>
   )
 }
