@@ -5,6 +5,9 @@
   "functions": {
     "api/baggage-check.js": {
       "maxDuration": 60
+    },
+    "api/travel-chat.js": {
+      "maxDuration": 60
     }
   }
 }

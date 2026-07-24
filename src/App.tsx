@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { dDay } from './lib/dates'
+import ChatBot from './components/ChatBot'
 import OfflineBanner from './components/OfflineBanner'
 import TabBar, { type TabKey } from './components/TabBar'
 import PrepareTab from './tabs/prepare/PrepareTab'
@@ -41,6 +42,7 @@ export default function App() {
       </main>
 
       <TabBar tab={tab} onChange={setTab} />
+      <ChatBot />
     </div>
   )
 }
