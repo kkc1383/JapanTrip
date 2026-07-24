@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Song+Myung&display=swap');
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');
 @import "tailwindcss";
 
 @theme {
@@ -11,8 +11,14 @@
   --color-indigo: #33557e;
   --color-gold: #b48a3f;
   --color-line: #d9cfba;
-  --font-display: "Song Myung", "Gowun Dodum", serif;
-  --font-body: "Gowun Dodum", "Apple SD Gothic Neo", sans-serif;
+  --font-display: "Pretendard Variable", "Apple SD Gothic Neo", sans-serif;
+  --font-body: "Pretendard Variable", "Apple SD Gothic Neo", sans-serif;
+}
+
+/* 디스플레이 서체: 명료한 고딕 + 묵직한 웨이트 */
+.font-display {
+  font-weight: 750;
+  letter-spacing: -0.01em;
 }
 
 body {
@@ -78,7 +84,8 @@ body::after {
 
   .btn-primary {
     font-family: var(--font-display);
-    letter-spacing: 0.18em;
+    font-weight: 700;
+    letter-spacing: 0.04em;
     background: var(--color-accent);
     color: #fff6e9;
     border-radius: 4px;
@@ -93,7 +100,8 @@ body::after {
   }
   .btn-soft {
     font-family: var(--font-display);
-    letter-spacing: 0.14em;
+    font-weight: 650;
+    letter-spacing: 0.02em;
     background: var(--color-accent-soft);
     color: var(--color-accent);
     border: 1px solid color-mix(in srgb, var(--color-accent) 35%, transparent);
@@ -150,13 +158,14 @@ body::after {
 
   .badge-hanko {
     font-family: var(--font-display);
+    font-weight: 700;
     display: inline-block;
     border: 1.5px solid var(--color-accent);
     color: var(--color-accent);
     border-radius: 3px;
     padding: 1px 6px;
     font-size: 11px;
-    letter-spacing: 0.2em;
+    letter-spacing: 0.08em;
     transform: rotate(-4deg);
   }
   .badge-hanko-fill {
@@ -217,8 +226,9 @@ body::after {
     align-items: center;
     gap: 6px;
     font-family: var(--font-display);
+    font-weight: 700;
     font-size: 14px;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.02em;
     background: var(--color-accent);
     color: #fff6e9;
     border-radius: 999px;
@@ -247,8 +257,9 @@ body::after {
     flex: 1;
     padding: 9px 0;
     font-family: var(--font-display);
+    font-weight: 650;
     font-size: 13px;
-    letter-spacing: 0.14em;
+    letter-spacing: 0.02em;
     color: var(--color-sub);
     transition: all 0.15s;
   }

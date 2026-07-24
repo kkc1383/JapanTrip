@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { dDay } from './lib/dates'
 import OfflineBanner from './components/OfflineBanner'
 import TabBar, { type TabKey } from './components/TabBar'
 import PrepareTab from './tabs/prepare/PrepareTab'
@@ -7,14 +8,18 @@ import DuringTab from './tabs/during/DuringTab'
 
 export default function App() {
   const [tab, setTab] = useState<TabKey>('prepare')
+  const d = dDay()
   return (
     <div className="mx-auto min-h-dvh max-w-xl pb-28">
       <OfflineBanner />
 
       <header className="relative overflow-hidden px-5 pt-7 pb-6">
         <div className="seigaiha pointer-events-none absolute inset-x-0 top-0 h-24 opacity-[0.13]" />
-        {/* 붉은 태양 */}
-        <div className="pointer-events-none absolute top-7 right-6 size-20 rounded-full bg-accent opacity-[0.16]" />
+        {/* D-day 한코 스탬프 */}
+        <div className="hanko absolute top-7 right-5 flex size-[72px] flex-col items-center justify-center">
+          <span className="text-[8px] tracking-[0.15em]">{d > 0 ? '출발까지' : d >= -2 ? '여행 중' : '완주'}</span>
+          <span className="text-[19px] leading-tight font-bold">{d > 0 ? `D-${d}` : d >= -2 ? '旅中' : '完'}</span>
+        </div>
         <p className="relative text-[10px] font-semibold tracking-[0.42em] text-indigo">
           SUMMER TRIP · JAPAN
         </p>
