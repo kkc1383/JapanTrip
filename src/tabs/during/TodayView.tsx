@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { placeSearchUrl } from '../../lib/googleMaps'
 import type { ItineraryItem } from '../../types'
 
@@ -13,8 +14,16 @@ export default function TodayView({
   items: [string, ItineraryItem][]
   isToday: boolean
 }) {
+  const [, setTick] = useState(0)
+  useEffect(() => {
+    const id = setInterval(() => setTick(t => t + 1), 60_000)
+    return () => clearInterval(id)
+  }, [])
+
   const now = nowHM()
-  const timed = items.filter(([, it]) => it.time)
+  const timed = items
+    .filter(([, it]) => it.time)
+    .sort((a, b) => a[1].time!.localeCompare(b[1].time!))
   const currentId = isToday
     ? [...timed].reverse().find(([, it]) => it.time! <= now)?.[0] ?? null
     : null

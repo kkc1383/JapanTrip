@@ -17,6 +17,8 @@ function FitBounds({ points }: { points: [number, number][] }) {
   useEffect(() => {
     if (points.length) {
       map.fitBounds(L.latLngBounds(points), { padding: [40, 40], maxZoom: 15 })
+    } else {
+      map.setView(TOKYO, 12)
     }
   }, [map, JSON.stringify(points)])
   return null
