@@ -10,7 +10,14 @@ export type ItineraryItem = {
   lng?: number
 }
 
-export type ChecklistItem = { text: string; checked: boolean; order: number }
+export type ChecklistItem = {
+  text: string
+  /** 사람별 체크 도입 이전 데이터 호환용 */
+  checked: boolean
+  order: number
+  /** 사람별 체크 상태 (경찬 kc / 예빈 yb) */
+  by?: { kc?: boolean; yb?: boolean }
+}
 export type ChecklistCategory = {
   name: string
   order: number

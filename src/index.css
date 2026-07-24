@@ -192,6 +192,10 @@ body::after {
     border-color: var(--color-accent);
     transform: rotate(-6deg);
   }
+  .stamp-check.check-yb:checked {
+    background: var(--color-indigo);
+    border-color: var(--color-indigo);
+  }
   .stamp-check:checked::after {
     content: '';
     position: absolute;
