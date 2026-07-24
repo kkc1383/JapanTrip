@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import ItinerarySection from './ItinerarySection'
+import PlanMap from './PlanMap'
 import Wishlist from './Wishlist'
 
 export default function PlanTab() {
   const [seg, setSeg] = useState<'itinerary' | 'wishlist'>('itinerary')
   return (
     <div className="stagger space-y-4">
+      <PlanMap />
       <div className="segment">
         <button
           type="button"

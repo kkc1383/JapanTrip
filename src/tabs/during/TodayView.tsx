@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { placeSearchUrl } from '../../lib/googleMaps'
+import { directionsUrl, placeSearchUrl } from '../../lib/googleMaps'
 import type { ItineraryItem } from '../../types'
 
 function nowHM(): string {
@@ -64,14 +64,26 @@ export default function TodayView({
                 {it.title}
               </div>
               {it.place && (
-                <a
-                  href={placeSearchUrl(it.place, it.lat, it.lng)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-1 inline-block text-[12px] text-indigo underline decoration-indigo/40 underline-offset-2"
-                >
-                  📍 {it.place}
-                </a>
+                <span className="mt-1 inline-flex items-center gap-2">
+                  <a
+                    href={placeSearchUrl(it.place, it.lat, it.lng)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[12px] text-indigo underline decoration-indigo/40 underline-offset-2"
+                  >
+                    📍 {it.place}
+                  </a>
+                  {it.lat != null && it.lng != null && (
+                    <a
+                      href={directionsUrl(it.lat, it.lng)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="rounded-sm border border-accent/40 bg-accent-soft px-1.5 py-px text-[10.5px] font-bold text-accent"
+                    >
+                      🧭 길찾기
+                    </a>
+                  )}
+                </span>
               )}
               {it.memo && (
                 <div className="mt-1.5 text-[12px] leading-relaxed whitespace-pre-wrap text-ink/75">{it.memo}</div>

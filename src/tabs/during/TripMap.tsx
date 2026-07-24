@@ -4,34 +4,12 @@ import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png'
 import iconUrl from 'leaflet/dist/images/marker-icon.png'
 import shadowUrl from 'leaflet/dist/images/marker-shadow.png'
 import { useEffect, useState } from 'react'
-import { CircleMarker, MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet'
+import { CircleMarker, MapContainer, Marker, Popup, TileLayer } from 'react-leaflet'
+import { FitBounds, Revalidate, TOKYO } from '../../components/mapHelpers'
 import { directionsUrl } from '../../lib/googleMaps'
 import type { ItineraryItem } from '../../types'
 
 L.Icon.Default.mergeOptions({ iconUrl, iconRetinaUrl, shadowUrl })
-
-const TOKYO: [number, number] = [35.681, 139.767]
-
-function FitBounds({ points }: { points: [number, number][] }) {
-  const map = useMap()
-  useEffect(() => {
-    if (points.length) {
-      map.fitBounds(L.latLngBounds(points), { padding: [40, 40], maxZoom: 15 })
-    } else {
-      map.setView(TOKYO, 12)
-    }
-  }, [map, JSON.stringify(points)])
-  return null
-}
-
-function Revalidate({ dep }: { dep: unknown }) {
-  const map = useMap()
-  useEffect(() => {
-    const id = setTimeout(() => map.invalidateSize(), 320)
-    return () => clearTimeout(id)
-  }, [map, dep])
-  return null
-}
 
 export default function TripMap({ items }: { items: [string, ItineraryItem][] }) {
   const [myPos, setMyPos] = useState<[number, number] | null>(null)
