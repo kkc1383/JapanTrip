@@ -12,7 +12,9 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: npm
-      - run: npm ci
+      # npm ci 대신 npm install: Windows에서 생성한 lockfile이 리눅스에서 요구하는
+      # optional 전이 의존성(@emnapi/*)을 누락하는 npm 버그로 npm ci가 실패한다
+      - run: npm install --no-audit --no-fund
       - run: npm run build
