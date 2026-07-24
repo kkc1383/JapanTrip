@@ -1,4 +1,5 @@
 import { useEffect, type ReactNode } from 'react'
+import { createPortal } from 'react-dom'
 
 export default function BottomSheet({
   open,
@@ -26,7 +27,8 @@ export default function BottomSheet({
   }, [open, onClose])
 
   if (!open) return null
-  return (
+  // 포털로 body에 직접 렌더 — 조상 transform/overflow에 영향받지 않게
+  return createPortal(
     <div className="fixed inset-0 z-40">
       <div className="dim absolute inset-0 bg-ink/45" onClick={onClose} />
       <div className="sheet absolute inset-x-0 bottom-0 mx-auto max-h-[85dvh] max-w-xl overflow-y-auto rounded-t-xl border-x border-t-2 border-ink/30 bg-bg px-5 pt-3 pb-8">
@@ -43,6 +45,7 @@ export default function BottomSheet({
         </div>
         {children}
       </div>
-    </div>
+    </div>,
+    document.body,
   )
 }

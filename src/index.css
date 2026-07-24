@@ -54,8 +54,9 @@ body::after {
     border-radius: 6px;
     box-shadow: 3px 3px 0 color-mix(in srgb, var(--color-ink) 9%, transparent);
   }
+  /* fill-mode는 backwards로: 종료 후 transform이 남으면 내부 fixed 요소(바텀시트)의 기준이 틀어진다 */
   .stagger > * {
-    animation: rise 0.5s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+    animation: rise 0.5s cubic-bezier(0.2, 0.7, 0.3, 1) backwards;
   }
   .stagger > *:nth-child(1) { animation-delay: 0.02s; }
   .stagger > *:nth-child(2) { animation-delay: 0.07s; }
@@ -218,7 +219,7 @@ body::after {
     letter-spacing: 0.06em;
   }
 
-  .tab-in { animation: rise 0.35s cubic-bezier(0.2, 0.7, 0.3, 1) both; }
+  .tab-in { animation: rise 0.35s cubic-bezier(0.2, 0.7, 0.3, 1) backwards; }
 
   .dim { animation: dim-in 0.2s both; }
   .sheet { animation: sheet-up 0.28s cubic-bezier(0.2, 0.7, 0.3, 1) both; }
