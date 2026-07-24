@@ -91,8 +91,8 @@ export default function ItinerarySection() {
         <p className="empty-box">아직 일정이 없어요 — 아래 ＋ 버튼으로 추가해 보세요</p>
       )}
       {items.map(([id, it], idx) => (
-        <div key={id} className="card flex items-stretch overflow-hidden">
-          <div className="flex w-[64px] shrink-0 flex-col items-center justify-center border-r border-dashed border-line bg-accent-soft/40 py-3">
+        <div key={id} className="card flex items-stretch">
+          <div className="flex w-[64px] shrink-0 flex-col items-center justify-center rounded-l-[5px] border-r border-dashed border-line bg-accent-soft/40 py-3">
             <span className="font-display text-[15px] text-accent">{it.time || '—'}</span>
             <span className="mt-0.5 text-[9px] tracking-[0.25em] text-sub">No.{String(idx + 1).padStart(2, '0')}</span>
           </div>

@@ -69,8 +69,8 @@ export default function InfoCards() {
   return (
     <div className="space-y-3.5">
       {cards.map(([id, c]) => (
-        <section key={id} className="card overflow-hidden px-4 py-3.5">
-          <span className="absolute top-0 left-0 h-full w-1 bg-gold/60" />
+        <section key={id} className="card px-4 py-3.5">
+          <span className="absolute top-0 left-0 h-full w-1 rounded-l-[5px] bg-gold/60" />
           <div className="flex items-start justify-between gap-2">
             <h3 className="font-display text-[15px] tracking-wide">{c.title}</h3>
             <ActionMenu
