@@ -1,6 +1,5 @@
+node_modules/
+dist/
 .vercel
 .omc/
-${CLAUDE_PLUGIN_DATA}/
-
-.vercel
 .env*

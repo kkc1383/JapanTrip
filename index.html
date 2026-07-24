@@ -1,48 +1,13 @@
 <!DOCTYPE html>
 <html lang="ko">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>일본여행 2026.8.20–22</title>
-  <link rel="stylesheet" href="css/style.css">
-</head>
-<body>
-  <div id="offline-banner" hidden>오프라인 — 변경사항이 저장되지 않습니다</div>
-  <header class="site-header">
-    <h1>일본여행 🇯🇵</h1>
-    <p class="dates">2026.8.20(목) – 8.22(토) · 2박 3일</p>
-  </header>
-  <nav class="tabs">
-    <button class="tab-btn active" data-target="panel-itinerary">일정</button>
-    <button class="tab-btn" data-target="panel-checklist">준비물</button>
-    <button class="tab-btn" data-target="panel-info">정보</button>
-  </nav>
-  <main>
-    <section id="panel-itinerary" class="tab-panel">
-      <nav id="day-tabs" class="day-tabs"></nav>
-      <div id="itinerary-list"></div>
-      <form id="itinerary-form" class="add-form">
-        <input name="time" type="time">
-        <input name="title" placeholder="일정 제목 (필수)" required>
-        <input name="place" placeholder="장소">
-        <textarea name="memo" placeholder="메모" rows="2"></textarea>
-        <button type="submit">일정 추가</button>
-        <button type="button" id="itinerary-cancel" class="small" hidden>수정 취소</button>
-      </form>
-    </section>
-    <section id="panel-checklist" class="tab-panel" hidden>
-      <div id="checklist-root"></div>
-    </section>
-    <section id="panel-info" class="tab-panel" hidden>
-      <div id="info-root"></div>
-      <form id="info-form" class="add-form">
-        <input name="title" placeholder="카드 제목 (필수)" required>
-        <textarea name="content" placeholder="내용 (URL은 자동으로 링크가 됩니다)" rows="4" required></textarea>
-        <button type="submit">정보 카드 추가</button>
-        <button type="button" id="info-cancel" class="small" hidden>수정 취소</button>
-      </form>
-    </section>
-  </main>
-  <script type="module" src="js/app.js"></script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#faf7f2" />
+    <title>일본여행 2026.8.20–22</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
 </html>
