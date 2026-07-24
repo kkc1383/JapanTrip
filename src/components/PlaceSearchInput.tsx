@@ -36,6 +36,12 @@ export default function PlaceSearchInput({
         <input
           value={value}
           onChange={e => onChange(e.target.value)}
+          onKeyDown={e => {
+            if (e.key === 'Enter') {
+              e.preventDefault()
+              search()
+            }
+          }}
           placeholder="장소"
           className="min-w-0 flex-1 rounded-lg border border-line bg-card px-3 py-2.5 text-sm"
         />

@@ -17,6 +17,7 @@ export default function ItinerarySection() {
   const [place, setPlace] = useState('')
   const [memo, setMemo] = useState('')
   const [coords, setCoords] = useState<Coords>(null)
+  const [formEpoch, setFormEpoch] = useState(0)
 
   const items = sortByOrder(data?.[day])
 
@@ -27,6 +28,7 @@ export default function ItinerarySection() {
     setPlace('')
     setMemo('')
     setCoords(null)
+    setFormEpoch(e => e + 1)
   }
 
   function startEdit(id: string, it: ItineraryItem) {
@@ -112,7 +114,13 @@ export default function ItinerarySection() {
           className="rounded-lg border border-line bg-card px-3 py-2.5 text-sm" />
         <input value={title} onChange={e => setTitle(e.target.value)} placeholder="일정 제목 (필수)" required
           className="rounded-lg border border-line bg-card px-3 py-2.5 text-sm" />
-        <PlaceSearchInput value={place} coords={coords} onChange={setPlace} onCoords={setCoords} />
+        <PlaceSearchInput
+          key={`${formEpoch}-${editingId ?? 'new'}`}
+          value={place}
+          coords={coords}
+          onChange={setPlace}
+          onCoords={setCoords}
+        />
         <textarea value={memo} onChange={e => setMemo(e.target.value)} placeholder="메모" rows={2}
           className="rounded-lg border border-line bg-card px-3 py-2.5 text-sm" />
         <button type="submit" className="rounded-lg bg-accent py-2.5 text-[15px] font-semibold text-white">
