@@ -1,6 +1,6 @@
 import Anthropic from '@anthropic-ai/sdk'
 
-const VERDICTS = ['기내, 수하 가능', '기내만 가능', '수하만 가능', '불가능'] as const
+const VERDICTS = ['기내, 수하 가능', '기내만 가능', '수하만 가능', '불가능']
 
 const SYSTEM =
   '너는 한국(인천)→일본(도쿄) 국제선 항공편(제주항공)의 수하물 규정 판정기다. ' +
@@ -10,12 +10,12 @@ const SYSTEM =
   '"수하만 가능"(기내 금지, 위탁은 가능 — 예: 칼, 100ml 초과 액체) | "불가능"(둘 다 금지 또는 일본 반입 금지). ' +
   '반드시 verdict 필드 하나만 반환한다.'
 
-export default async function handler(req: any, res: any) {
+export default async function handler(req, res) {
   if (req.method !== 'POST') {
     res.status(405).json({ error: 'method_not_allowed' })
     return
   }
-  const item = String(req.body?.item ?? '')
+  const item = String((req.body && req.body.item) || '')
     .trim()
     .slice(0, 60)
   if (!item) {
@@ -34,7 +34,7 @@ export default async function handler(req: any, res: any) {
           type: 'json_schema',
           schema: {
             type: 'object',
-            properties: { verdict: { type: 'string', enum: [...VERDICTS] } },
+            properties: { verdict: { type: 'string', enum: VERDICTS } },
             required: ['verdict'],
             additionalProperties: false,
           },
@@ -49,8 +49,8 @@ export default async function handler(req: any, res: any) {
       return
     }
     const block = response.content.find(b => b.type === 'text')
-    const verdict = block && 'text' in block ? (JSON.parse(block.text).verdict as string) : null
-    if (!verdict || !(VERDICTS as readonly string[]).includes(verdict)) {
+    const verdict = block ? JSON.parse(block.text).verdict : null
+    if (!verdict || !VERDICTS.includes(verdict)) {
       res.status(502).json({ error: 'bad_verdict' })
       return
     }
