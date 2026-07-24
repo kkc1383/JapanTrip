@@ -5,6 +5,7 @@ import { sortByOrder } from '../../lib/sort'
 import { useRtdbValue } from '../../hooks/useRtdb'
 import type { DayKey, ItineraryItem } from '../../types'
 import TodayView from './TodayView'
+import TripMap from './TripMap'
 
 export default function DuringTab() {
   const data = useRtdbValue<Partial<Record<DayKey, Record<string, ItineraryItem>>>>('itinerary')
@@ -14,6 +15,7 @@ export default function DuringTab() {
   return (
     <div className="space-y-3">
       <DayTabs day={day} onChange={setDay} />
+      <TripMap items={items} />
       <TodayView items={items} isToday={day === todayKey()} />
     </div>
   )
