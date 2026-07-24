@@ -20,14 +20,35 @@ export default function FxRate() {
 
   if (failed) return null
   return (
-    <div className="flex items-center justify-between rounded-xl border border-line bg-card px-4 py-3.5">
-      <div>
-        <div className="text-[13px] text-sub">엔화 환율 (참고용)</div>
-        <div className="text-xl font-bold">
-          {per100 === null ? '불러오는 중...' : `100엔 = ${per100.toFixed(1)}원`}
+    <div className="card flex items-stretch overflow-hidden">
+      <div className="flex items-center bg-indigo px-3">
+        <span className="font-display text-[13px] tracking-[0.2em] text-[#fff6e9] [writing-mode:vertical-rl]">
+          両替所
+        </span>
+      </div>
+      <div className="flex flex-1 items-center justify-between px-4 py-3.5">
+        <div>
+          <p className="text-[10px] font-semibold tracking-[0.3em] text-gold">JPY → KRW</p>
+          <p className="font-display mt-0.5 text-[22px]">
+            {per100 === null ? (
+              <span className="text-sm text-sub">불러오는 중...</span>
+            ) : (
+              <>
+                100엔 = <span className="text-accent">{per100.toFixed(1)}</span>원
+              </>
+            )}
+          </p>
+        </div>
+        <div className="border-l border-dashed border-line pl-3 text-right text-[11px] leading-relaxed text-sub">
+          참고용 환율
+          {updated && (
+            <>
+              <br />
+              {updated} 기준
+            </>
+          )}
         </div>
       </div>
-      {updated && <div className="text-[12px] text-sub">{updated} 기준</div>}
     </div>
   )
 }

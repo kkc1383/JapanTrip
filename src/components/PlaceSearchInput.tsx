@@ -32,7 +32,7 @@ export default function PlaceSearchInput({
 
   return (
     <div className="space-y-1.5">
-      <div className="flex gap-1.5">
+      <div className="flex gap-2">
         <input
           value={value}
           onChange={e => onChange(e.target.value)}
@@ -43,29 +43,29 @@ export default function PlaceSearchInput({
             }
           }}
           placeholder="장소"
-          className="min-w-0 flex-1 rounded-lg border border-line bg-card px-3 py-2.5 text-sm"
+          className="field flex-1"
         />
         <button
           type="button"
           onClick={search}
           disabled={searching}
-          className="shrink-0 rounded-lg bg-accent-soft px-3 text-sm font-semibold text-accent disabled:opacity-50"
+          className="btn-soft shrink-0 px-3 text-sm disabled:opacity-50"
         >
           {searching ? '검색 중' : '좌표 검색'}
         </button>
       </div>
       {coords && (
-        <div className="flex items-center gap-2 text-[13px] text-sub">
-          <span>📍 좌표 설정됨</span>
-          <button type="button" onClick={() => onCoords(null)} className="underline">
+        <div className="flex items-center gap-2 text-[12px] text-indigo">
+          <span className="badge-hanko !rotate-0 !border-indigo !text-indigo">📍 좌표 설정됨</span>
+          <button type="button" onClick={() => onCoords(null)} className="text-sub underline underline-offset-2">
             해제
           </button>
         </div>
       )}
       {results !== null && (
-        <div className="overflow-hidden rounded-lg border border-line bg-card">
+        <div className="card overflow-hidden !shadow-none">
           {results.length === 0 && (
-            <p className="px-3 py-2 text-[13px] text-sub">
+            <p className="px-3 py-2.5 text-[12px] text-sub">
               결과가 없어요 — 다른 이름으로 검색하거나 좌표 없이 저장하세요
             </p>
           )}
@@ -77,8 +77,9 @@ export default function PlaceSearchInput({
                 onCoords({ lat: r.lat, lng: r.lng })
                 setResults(null)
               }}
-              className="block w-full border-b border-line px-3 py-2 text-left text-[13px] last:border-b-0 hover:bg-accent-soft"
+              className="block w-full border-b border-dashed border-line px-3 py-2.5 text-left text-[12px] transition-colors last:border-b-0 hover:bg-accent-soft"
             >
+              <span className="mr-1.5 text-accent">▸</span>
               {r.displayName}
             </button>
           ))}

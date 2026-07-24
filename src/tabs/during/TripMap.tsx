@@ -41,46 +41,53 @@ export default function TripMap({ items }: { items: [string, ItineraryItem][] })
   const points = markers.map(([, it]) => [it.lat!, it.lng!] as [number, number])
 
   return (
-    <div className="relative z-0 h-80 overflow-hidden rounded-xl border border-line">
-      <MapContainer center={TOKYO} zoom={12} className="h-full w-full">
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-          url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
-        <FitBounds points={points} />
-        {markers.map(([id, it]) => (
-          <Marker key={id} position={[it.lat!, it.lng!]}>
-            <Popup>
-              <div className="text-sm font-semibold">{it.time ? `${it.time} · ` : ''}{it.title}</div>
-              {it.place && <div className="text-xs">{it.place}</div>}
-              <a
-                href={directionsUrl(it.lat!, it.lng!)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-xs underline"
-              >
-                구글맵 길찾기
-              </a>
-            </Popup>
-          </Marker>
-        ))}
-        {myPos && (
-          <CircleMarker
-            center={myPos}
-            radius={8}
-            pathOptions={{ color: '#2563eb', fillColor: '#3b82f6', fillOpacity: 0.9 }}
-          >
-            <Popup>내 위치</Popup>
-          </CircleMarker>
+    <div className="card relative z-0 overflow-hidden !p-0">
+      {/* 지도 상단 라벨 */}
+      <div className="flex items-center justify-between border-b border-dashed border-line bg-card px-3 py-1.5">
+        <span className="font-display text-[12px] tracking-[0.25em] text-indigo">旅程地圖 · MAP</span>
+        <span className="text-[10px] tracking-wider text-sub">{markers.length}곳 표시됨</span>
+      </div>
+      <div className="relative h-72">
+        <MapContainer center={TOKYO} zoom={12} className="h-full w-full">
+          <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+          />
+          <FitBounds points={points} />
+          {markers.map(([id, it]) => (
+            <Marker key={id} position={[it.lat!, it.lng!]}>
+              <Popup>
+                <div className="text-sm font-semibold">{it.time ? `${it.time} · ` : ''}{it.title}</div>
+                {it.place && <div className="text-xs">{it.place}</div>}
+                <a
+                  href={directionsUrl(it.lat!, it.lng!)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs underline"
+                >
+                  구글맵 길찾기
+                </a>
+              </Popup>
+            </Marker>
+          ))}
+          {myPos && (
+            <CircleMarker
+              center={myPos}
+              radius={8}
+              pathOptions={{ color: '#33557e', fillColor: '#33557e', fillOpacity: 0.85 }}
+            >
+              <Popup>내 위치</Popup>
+            </CircleMarker>
+          )}
+        </MapContainer>
+        {!markers.length && (
+          <div className="pointer-events-none absolute inset-x-0 top-2 z-[500] text-center">
+            <span className="rounded-sm border border-dashed border-ink/30 bg-card/95 px-3 py-1 text-[11px] tracking-wide text-sub">
+              좌표가 등록된 일정이 없어요 — 여행 계획 탭에서 좌표 검색으로 추가하세요
+            </span>
+          </div>
         )}
-      </MapContainer>
-      {!markers.length && (
-        <div className="pointer-events-none absolute inset-x-0 top-2 z-[500] text-center">
-          <span className="rounded-full bg-card/90 px-3 py-1 text-[12px] text-sub">
-            좌표가 등록된 일정이 없어요 — 여행 계획 탭에서 좌표 검색으로 추가하세요
-          </span>
-        </div>
-      )}
+      </div>
     </div>
   )
 }

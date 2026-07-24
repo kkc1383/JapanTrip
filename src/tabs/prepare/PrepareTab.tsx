@@ -2,20 +2,21 @@ import Dday from './Dday'
 import FxRate from './FxRate'
 import Checklist from './Checklist'
 import InfoCards from './InfoCards'
+import SectionTitle from '../../components/SectionTitle'
 
 export default function PrepareTab() {
   return (
-    <div className="space-y-6">
+    <div className="stagger space-y-7">
       <div className="space-y-3">
         <Dday />
         <FxRate />
       </div>
       <section>
-        <h2 className="mb-2 text-lg font-bold">준비물 체크리스트</h2>
+        <SectionTitle ko="준비물 체크리스트" sub="Checklist" />
         <Checklist />
       </section>
       <section>
-        <h2 className="mb-2 text-lg font-bold">준비 정보</h2>
+        <SectionTitle ko="준비 정보" sub="Notes" />
         <InfoCards />
       </section>
     </div>

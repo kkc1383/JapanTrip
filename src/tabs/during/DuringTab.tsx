@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import DayTabs from '../../components/DayTabs'
+import SectionTitle from '../../components/SectionTitle'
 import { todayKey } from '../../lib/dates'
 import { sortByOrder } from '../../lib/sort'
 import { useRtdbValue } from '../../hooks/useRtdb'
@@ -13,10 +14,13 @@ export default function DuringTab() {
   const items = sortByOrder(data?.[day])
 
   return (
-    <div className="space-y-3">
+    <div className="stagger space-y-3.5">
       <DayTabs day={day} onChange={setDay} />
       <TripMap items={items} />
-      <TodayView items={items} isToday={day === todayKey()} />
+      <section>
+        <SectionTitle ko="오늘의 일정" sub="Timeline" />
+        <TodayView items={items} isToday={day === todayKey()} />
+      </section>
     </div>
   )
 }

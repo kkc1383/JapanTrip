@@ -1,15 +1,16 @@
 import ItinerarySection from './ItinerarySection'
 import Wishlist from './Wishlist'
+import SectionTitle from '../../components/SectionTitle'
 
 export default function PlanTab() {
   return (
-    <div className="space-y-6">
+    <div className="stagger space-y-7">
       <section>
-        <h2 className="mb-2 text-lg font-bold">날짜별 일정</h2>
+        <SectionTitle ko="날짜별 일정" sub="Itinerary" />
         <ItinerarySection />
       </section>
       <section>
-        <h2 className="mb-2 text-lg font-bold">가고 싶은 곳</h2>
+        <SectionTitle ko="가고 싶은 곳" sub="Wishlist" />
         <Wishlist />
       </section>
     </div>

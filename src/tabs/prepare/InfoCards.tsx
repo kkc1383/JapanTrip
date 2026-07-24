@@ -11,7 +11,7 @@ function Linkified({ text }: { text: string }) {
     <>
       {parts.map((p, i) =>
         /^https?:\/\//.test(p) ? (
-          <a key={i} href={p} target="_blank" rel="noopener noreferrer" className="text-accent underline">
+          <a key={i} href={p} target="_blank" rel="noopener noreferrer" className="text-indigo underline decoration-indigo/40 underline-offset-2">
             {p}
           </a>
         ) : (
@@ -49,21 +49,22 @@ export default function InfoCards() {
   }
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-3.5">
       {cards.map(([id, c]) => (
-        <section key={id} className="rounded-xl border border-line bg-card px-4 py-3.5">
-          <h2 className="text-base font-semibold">{c.title}</h2>
-          <p className="mt-1.5 text-sm leading-relaxed whitespace-pre-wrap break-all">
+        <section key={id} className="card overflow-hidden px-4 py-3.5">
+          <span className="absolute top-0 left-0 h-full w-1 bg-gold/60" />
+          <h3 className="font-display text-[15px] tracking-wide">{c.title}</h3>
+          <p className="mt-2 text-[13px] leading-relaxed break-all whitespace-pre-wrap text-ink/85">
             <Linkified text={c.content} />
           </p>
-          <div className="mt-2 flex justify-end gap-3 text-[13px] text-sub">
+          <div className="mt-2.5 flex justify-end gap-3 text-[12px] text-sub/70">
             <button
               onClick={() => {
                 setEditingId(id)
                 setTitle(c.title)
                 setContent(c.content)
               }}
-              className="hover:text-accent"
+              className="transition-colors hover:text-accent"
             >
               수정
             </button>
@@ -72,7 +73,7 @@ export default function InfoCards() {
                 remove(ref(db, `info/${id}`))
                 if (editingId === id) resetForm()
               }}
-              className="hover:text-accent"
+              className="transition-colors hover:text-accent"
             >
               삭제
             </button>
@@ -85,7 +86,7 @@ export default function InfoCards() {
           onChange={e => setTitle(e.target.value)}
           placeholder="카드 제목 (필수)"
           required
-          className="rounded-lg border border-line bg-card px-3 py-2.5 text-sm"
+          className="field"
         />
         <textarea
           value={content}
@@ -93,13 +94,13 @@ export default function InfoCards() {
           placeholder="내용 (URL은 자동으로 링크가 됩니다)"
           rows={4}
           required
-          className="rounded-lg border border-line bg-card px-3 py-2.5 text-sm"
+          className="field"
         />
-        <button type="submit" className="rounded-lg bg-accent py-2.5 text-[15px] font-semibold text-white">
+        <button type="submit" className="btn-primary">
           {editingId ? '카드 수정' : '정보 카드 추가'}
         </button>
         {editingId && (
-          <button type="button" onClick={resetForm} className="text-[13px] text-sub">
+          <button type="button" onClick={resetForm} className="text-[13px] text-sub underline underline-offset-2">
             수정 취소
           </button>
         )}

@@ -59,43 +59,48 @@ export default function Wishlist() {
   }
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-3.5">
       {!items.length && (
-        <p className="py-6 text-center text-sm text-sub">
-          가보고 싶은 곳을 모아두고, 정해지면 일정으로 옮기세요!
-        </p>
+        <p className="empty-box">가보고 싶은 곳을 모아두고, 정해지면 일정으로 옮기세요!</p>
       )}
       {items.map(([id, it]) => (
-        <div key={id} className="rounded-xl border border-line bg-card px-4 py-3.5">
-          <div className="font-semibold">{it.title}</div>
+        <div key={id} className="card px-4 py-3.5">
+          <span className="absolute top-2.5 right-3 text-[10px] tracking-[0.3em] text-gold">WISH</span>
+          <div className="font-display text-[15px] tracking-wide">{it.title}</div>
           {it.place && (
             <a
               href={placeSearchUrl(it.place, it.lat, it.lng)}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-0.5 block text-[13px] text-sub underline"
+              className="mt-1 inline-flex items-center gap-1 text-[12px] text-indigo underline decoration-indigo/40 underline-offset-2"
             >
               📍 {it.place}
+              {it.lat != null && <span className="text-[9px] text-gold">◆</span>}
             </a>
           )}
-          {it.memo && <div className="mt-1.5 text-[13px] whitespace-pre-wrap">{it.memo}</div>}
-          <div className="mt-2 flex items-center justify-end gap-3 text-[13px] text-sub">
+          {it.memo && <div className="mt-1.5 text-[12px] leading-relaxed whitespace-pre-wrap text-ink/75">{it.memo}</div>}
+          <div className="mt-2.5 flex items-center justify-end gap-3 border-t border-dashed border-line/70 pt-2 text-[12px] text-sub">
             {movingId === id ? (
               <>
-                <span>어느 날로?</span>
+                <span className="font-display tracking-wider">어느 날로?</span>
                 {DAYS.map(d => (
-                  <button key={d.key} onClick={() => moveToDay(id, it, d.key)} disabled={moving} className="font-semibold text-accent disabled:opacity-50">
+                  <button
+                    key={d.key}
+                    onClick={() => moveToDay(id, it, d.key)}
+                    disabled={moving}
+                    className="font-display text-accent underline underline-offset-2 disabled:opacity-50"
+                  >
                     {d.label}
                   </button>
                 ))}
-                <button onClick={() => setMovingId(null)}>취소</button>
+                <button onClick={() => setMovingId(null)} className="hover:text-accent">취소</button>
               </>
             ) : (
               <>
-                <button onClick={() => setMovingId(id)} className="font-semibold text-accent">
-                  일정으로 옮기기
+                <button onClick={() => setMovingId(id)} className="font-display tracking-wider text-accent">
+                  → 일정으로 옮기기
                 </button>
-                <button onClick={() => remove(ref(db, `wishlist/${id}`))} className="hover:text-accent">
+                <button onClick={() => remove(ref(db, `wishlist/${id}`))} className="transition-colors hover:text-accent">
                   삭제
                 </button>
               </>
@@ -103,13 +108,12 @@ export default function Wishlist() {
           </div>
         </div>
       ))}
-      <form onSubmit={submit} className="grid gap-2">
-        <input value={title} onChange={e => setTitle(e.target.value)} placeholder="가고 싶은 곳 (필수)" required
-          className="rounded-lg border border-line bg-card px-3 py-2.5 text-sm" />
+      <form onSubmit={submit} className="card grid gap-2 !border-dashed bg-card/60 p-3.5 !shadow-none">
+        <p className="font-display text-[12px] tracking-[0.2em] text-sub">후보 追加</p>
+        <input value={title} onChange={e => setTitle(e.target.value)} placeholder="가고 싶은 곳 (필수)" required className="field" />
         <PlaceSearchInput key={formEpoch} value={place} coords={coords} onChange={setPlace} onCoords={setCoords} />
-        <textarea value={memo} onChange={e => setMemo(e.target.value)} placeholder="메모 (왜 가고 싶은지 등)" rows={2}
-          className="rounded-lg border border-line bg-card px-3 py-2.5 text-sm" />
-        <button type="submit" className="rounded-lg bg-accent-soft py-2.5 text-[15px] font-semibold text-accent">
+        <textarea value={memo} onChange={e => setMemo(e.target.value)} placeholder="메모 (왜 가고 싶은지 등)" rows={2} className="field" />
+        <button type="submit" className="btn-soft py-2.5 text-[15px]">
           후보 추가
         </button>
       </form>

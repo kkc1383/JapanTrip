@@ -8,9 +8,9 @@ import type { ChecklistCategory } from '../../types'
 export default function Checklist() {
   const data = useRtdbValue<Record<string, ChecklistCategory>>('checklist')
   const cats = sortByOrder(data)
-  if (!cats.length) return <p className="py-8 text-center text-sm text-sub">체크리스트를 불러오는 중...</p>
+  if (!cats.length) return <p className="empty-box">체크리스트를 불러오는 중...</p>
   return (
-    <div className="space-y-3">
+    <div className="space-y-3.5">
       {cats.map(([catId, cat]) => (
         <Category key={catId} catId={catId} cat={cat} />
       ))}
@@ -22,6 +22,7 @@ function Category({ catId, cat }: { catId: string; cat: ChecklistCategory }) {
   const [text, setText] = useState('')
   const items = sortByOrder(cat.items)
   const done = items.filter(([, it]) => it.checked).length
+  const allDone = items.length > 0 && done === items.length
 
   function addItem(e: FormEvent) {
     e.preventDefault()
@@ -33,37 +34,56 @@ function Category({ catId, cat }: { catId: string; cat: ChecklistCategory }) {
   }
 
   return (
-    <section className="rounded-xl border border-line bg-card px-4 py-3.5">
-      <h2 className="text-base font-semibold">
-        {cat.name} <span className="ml-1 text-[13px] font-normal text-sub">{done}/{items.length}</span>
-      </h2>
-      <div className="mt-1">
+    <section className="card px-4 py-3.5">
+      <div className="flex items-center justify-between">
+        <h3 className="font-display text-[16px] tracking-wide">
+          {cat.name}
+          {allDone && <span className="badge-hanko ml-2">完了</span>}
+        </h3>
+        <span className="font-display text-[12px] text-sub">
+          <span className="text-accent">{done}</span> / {items.length}
+        </span>
+      </div>
+      {/* 진행 바 */}
+      <div className="mt-2 h-[3px] w-full bg-line">
+        <div
+          className="h-full bg-accent transition-all duration-500"
+          style={{ width: items.length ? `${(done / items.length) * 100}%` : '0%' }}
+        />
+      </div>
+      <div className="mt-2">
         {items.map(([itemId, it]) => (
-          <div key={itemId} className="flex items-center gap-2.5 py-1.5">
+          <div key={itemId} className="flex items-center gap-3 border-b border-dashed border-line/70 py-2 last:border-b-0">
             <input
               type="checkbox"
               checked={it.checked}
               onChange={e => update(ref(db, `checklist/${catId}/items/${itemId}`), { checked: e.target.checked })}
-              className="size-5 accent-accent"
+              className="stamp-check"
             />
-            <span className={`flex-1 text-[15px] ${it.checked ? 'text-sub line-through' : ''}`}>{it.text}</span>
+            <span
+              className={`flex-1 text-[14px] transition-colors ${
+                it.checked ? 'text-sub/70 line-through decoration-accent/50' : ''
+              }`}
+            >
+              {it.text}
+            </span>
             <button
               onClick={() => remove(ref(db, `checklist/${catId}/items/${itemId}`))}
-              className="text-[13px] text-sub hover:text-accent"
+              className="text-[12px] text-sub/60 transition-colors hover:text-accent"
             >
               삭제
             </button>
           </div>
         ))}
       </div>
-      <form onSubmit={addItem} className="mt-2 flex gap-1.5">
+      <form onSubmit={addItem} className="mt-2.5 flex gap-2">
         <input
           value={text}
           onChange={e => setText(e.target.value)}
           placeholder="항목 추가"
-          className="min-w-0 flex-1 rounded-lg border border-line px-2.5 py-2 text-sm"
+          className="field flex-1 !py-2"
         />
-        <button type="submit" className="rounded-lg bg-accent-soft px-3.5 font-semibold text-accent">
+        <button type="submit" className="btn-soft shrink-0 px-4 text-sm">
           추가
         </button>
       </form>

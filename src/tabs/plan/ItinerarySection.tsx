@@ -71,49 +71,55 @@ export default function ItinerarySection() {
   }
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-3.5">
       <DayTabs day={day} onChange={d => { setDay(d); resetForm() }} />
       {!items.length && (
-        <p className="py-8 text-center text-sm text-sub">아직 일정이 없어요. 아래에서 추가해 보세요!</p>
+        <p className="empty-box">아직 일정이 없어요 — 아래에서 첫 일정을 추가해 보세요</p>
       )}
       {items.map(([id, it], idx) => (
-        <div key={id} className="flex items-start gap-3 rounded-xl border border-line bg-card px-4 py-3.5">
-          <div className="min-w-12 pt-0.5 text-sm font-bold text-accent">{it.time || '—'}</div>
-          <div className="flex-1">
-            <div className="font-semibold">{it.title}</div>
+        <div key={id} className="card flex items-stretch overflow-hidden">
+          {/* 시간 컬럼 */}
+          <div className="flex w-[64px] shrink-0 flex-col items-center justify-center border-r border-dashed border-line bg-accent-soft/40 py-3">
+            <span className="font-display text-[15px] text-accent">{it.time || '—'}</span>
+            <span className="mt-0.5 text-[9px] tracking-[0.25em] text-sub">No.{String(idx + 1).padStart(2, '0')}</span>
+          </div>
+          <div className="flex-1 px-3.5 py-3">
+            <div className="font-display text-[15px] tracking-wide">{it.title}</div>
             {it.place && (
               <a
                 href={placeSearchUrl(it.place, it.lat, it.lng)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-0.5 block text-[13px] text-sub underline"
+                className="mt-1 inline-flex items-center gap-1 text-[12px] text-indigo underline decoration-indigo/40 underline-offset-2"
               >
                 📍 {it.place}
+                {it.lat != null && <span className="text-[9px] text-gold">◆</span>}
               </a>
             )}
-            {it.memo && <div className="mt-1.5 text-[13px] whitespace-pre-wrap">{it.memo}</div>}
+            {it.memo && <div className="mt-1.5 text-[12px] leading-relaxed whitespace-pre-wrap text-ink/75">{it.memo}</div>}
           </div>
-          <div className="flex flex-col gap-0.5 text-[13px] text-sub">
-            <button disabled={idx === 0} onClick={() => swapOrder(idx, idx - 1)} className="disabled:opacity-30">▲</button>
-            <button disabled={idx === items.length - 1} onClick={() => swapOrder(idx, idx + 1)} className="disabled:opacity-30">▼</button>
-            <button onClick={() => startEdit(id, it)} className="hover:text-accent">수정</button>
+          <div className="flex flex-col items-center justify-center gap-1 border-l border-dashed border-line px-2 text-[12px] text-sub/70">
+            <button disabled={idx === 0} onClick={() => swapOrder(idx, idx - 1)} className="transition-colors hover:text-accent disabled:opacity-25">▲</button>
+            <button disabled={idx === items.length - 1} onClick={() => swapOrder(idx, idx + 1)} className="transition-colors hover:text-accent disabled:opacity-25">▼</button>
+            <button onClick={() => startEdit(id, it)} className="transition-colors hover:text-accent">수정</button>
             <button
               onClick={() => {
                 remove(ref(db, `itinerary/${day}/${id}`))
                 if (editingId === id) resetForm()
               }}
-              className="hover:text-accent"
+              className="transition-colors hover:text-accent"
             >
               삭제
             </button>
           </div>
         </div>
       ))}
-      <form onSubmit={submit} className="grid gap-2">
-        <input type="time" value={time} onChange={e => setTime(e.target.value)}
-          className="rounded-lg border border-line bg-card px-3 py-2.5 text-sm" />
-        <input value={title} onChange={e => setTitle(e.target.value)} placeholder="일정 제목 (필수)" required
-          className="rounded-lg border border-line bg-card px-3 py-2.5 text-sm" />
+      <form onSubmit={submit} className="card grid gap-2 !border-dashed bg-card/60 p-3.5 !shadow-none">
+        <p className="font-display text-[12px] tracking-[0.2em] text-sub">
+          {editingId ? '일정 수정 中' : '새 일정 追加'}
+        </p>
+        <input type="time" value={time} onChange={e => setTime(e.target.value)} className="field" />
+        <input value={title} onChange={e => setTitle(e.target.value)} placeholder="일정 제목 (필수)" required className="field" />
         <PlaceSearchInput
           key={`${formEpoch}-${editingId ?? 'new'}`}
           value={place}
@@ -121,13 +127,12 @@ export default function ItinerarySection() {
           onChange={setPlace}
           onCoords={setCoords}
         />
-        <textarea value={memo} onChange={e => setMemo(e.target.value)} placeholder="메모" rows={2}
-          className="rounded-lg border border-line bg-card px-3 py-2.5 text-sm" />
-        <button type="submit" className="rounded-lg bg-accent py-2.5 text-[15px] font-semibold text-white">
+        <textarea value={memo} onChange={e => setMemo(e.target.value)} placeholder="메모" rows={2} className="field" />
+        <button type="submit" className="btn-primary">
           {editingId ? '일정 수정' : '일정 추가'}
         </button>
         {editingId && (
-          <button type="button" onClick={resetForm} className="text-[13px] text-sub">수정 취소</button>
+          <button type="button" onClick={resetForm} className="text-[13px] text-sub underline underline-offset-2">수정 취소</button>
         )}
       </form>
     </div>
