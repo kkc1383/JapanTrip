@@ -70,22 +70,7 @@ export default async function handler(req, res) {
       res.status(502).json({ error: 'bad_verdict' })
       return
     }
-    const debug =
-      req.query && req.query.debug
-        ? {
-            v: 5,
-            item_received: item,
-            item_codes: [...item].slice(0, 6).map(c => c.codePointAt(0).toString(16)).join(' '),
-            stop: response.stop_reason,
-            model: response.model,
-            blocks: response.content.map(b => b.type).join(','),
-            out_tokens: response.usage && response.usage.output_tokens,
-            in_tokens: response.usage && response.usage.input_tokens,
-            sys_len: SYSTEM.length,
-            sys_head: SYSTEM.slice(0, 40),
-          }
-        : undefined
-    res.status(200).json(debug ? { verdict, debug } : { verdict })
+    res.status(200).json({ verdict })
   } catch {
     res.status(502).json({ error: 'ai_failed' })
   }
