@@ -1,5 +1,8 @@
 import { get, push, ref, remove } from 'firebase/database'
 import { useState, type FormEvent } from 'react'
+import ActionMenu from '../../components/ActionMenu'
+import BottomSheet from '../../components/BottomSheet'
+import Fab from '../../components/Fab'
 import PlaceSearchInput, { type Coords } from '../../components/PlaceSearchInput'
 import { DAYS } from '../../lib/dates'
 import { db } from '../../lib/firebase'
@@ -11,6 +14,7 @@ import type { DayKey, ItineraryItem, WishlistItem } from '../../types'
 export default function Wishlist() {
   const data = useRtdbValue<Record<string, WishlistItem>>('wishlist')
   const items = sortByOrder(data)
+  const [sheetOpen, setSheetOpen] = useState(false)
   const [title, setTitle] = useState('')
   const [place, setPlace] = useState('')
   const [memo, setMemo] = useState('')
@@ -18,6 +22,11 @@ export default function Wishlist() {
   const [movingId, setMovingId] = useState<string | null>(null)
   const [moving, setMoving] = useState(false)
   const [formEpoch, setFormEpoch] = useState(0)
+
+  function closeSheet() {
+    setSheetOpen(false)
+    setTitle(''); setPlace(''); setMemo(''); setCoords(null); setFormEpoch(e => e + 1)
+  }
 
   function submit(e: FormEvent) {
     e.preventDefault()
@@ -32,7 +41,7 @@ export default function Wishlist() {
       lng: coords?.lng ?? null,
       order: maxOrder + 1,
     })
-    setTitle(''); setPlace(''); setMemo(''); setCoords(null); setFormEpoch(e => e + 1)
+    closeSheet()
   }
 
   async function moveToDay(id: string, it: WishlistItem, day: DayKey) {
@@ -65,8 +74,12 @@ export default function Wishlist() {
       )}
       {items.map(([id, it]) => (
         <div key={id} className="card px-4 py-3.5">
-          <span className="absolute top-2.5 right-3 text-[10px] tracking-[0.3em] text-gold">WISH</span>
-          <div className="font-display text-[15px] tracking-wide">{it.title}</div>
+          <div className="flex items-start justify-between gap-2">
+            <div className="font-display text-[15px] tracking-wide">{it.title}</div>
+            <ActionMenu
+              actions={[{ label: '삭제', danger: true, onClick: () => remove(ref(db, `wishlist/${id}`)) }]}
+            />
+          </div>
           {it.place && (
             <a
               href={placeSearchUrl(it.place, it.lat, it.lng)}
@@ -96,27 +109,24 @@ export default function Wishlist() {
                 <button onClick={() => setMovingId(null)} className="hover:text-accent">취소</button>
               </>
             ) : (
-              <>
-                <button onClick={() => setMovingId(id)} className="font-display tracking-wider text-accent">
-                  → 일정으로 옮기기
-                </button>
-                <button onClick={() => remove(ref(db, `wishlist/${id}`))} className="transition-colors hover:text-accent">
-                  삭제
-                </button>
-              </>
+              <button onClick={() => setMovingId(id)} className="font-display tracking-wider text-accent">
+                → 일정으로 옮기기
+              </button>
             )}
           </div>
         </div>
       ))}
-      <form onSubmit={submit} className="card grid gap-2 !border-dashed bg-card/60 p-3.5 !shadow-none">
-        <p className="font-display text-[12px] tracking-[0.2em] text-sub">후보 追加</p>
-        <input value={title} onChange={e => setTitle(e.target.value)} placeholder="가고 싶은 곳 (필수)" required className="field" />
-        <PlaceSearchInput key={formEpoch} value={place} coords={coords} onChange={setPlace} onCoords={setCoords} />
-        <textarea value={memo} onChange={e => setMemo(e.target.value)} placeholder="메모 (왜 가고 싶은지 등)" rows={2} className="field" />
-        <button type="submit" className="btn-soft py-2.5 text-[15px]">
-          후보 추가
-        </button>
-      </form>
+
+      <Fab label="후보 추가" onClick={() => setSheetOpen(true)} />
+
+      <BottomSheet open={sheetOpen} title="가고 싶은 곳 추가" onClose={closeSheet}>
+        <form onSubmit={submit} className="grid gap-2.5">
+          <input value={title} onChange={e => setTitle(e.target.value)} placeholder="가고 싶은 곳 (필수)" required className="field" />
+          <PlaceSearchInput key={formEpoch} value={place} coords={coords} onChange={setPlace} onCoords={setCoords} />
+          <textarea value={memo} onChange={e => setMemo(e.target.value)} placeholder="메모 (왜 가고 싶은지 등)" rows={2} className="field" />
+          <button type="submit" className="btn-primary">후보 추가</button>
+        </form>
+      </BottomSheet>
     </div>
   )
 }

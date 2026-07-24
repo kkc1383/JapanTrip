@@ -24,8 +24,18 @@ function FitBounds({ points }: { points: [number, number][] }) {
   return null
 }
 
+function Revalidate({ dep }: { dep: unknown }) {
+  const map = useMap()
+  useEffect(() => {
+    const id = setTimeout(() => map.invalidateSize(), 320)
+    return () => clearTimeout(id)
+  }, [map, dep])
+  return null
+}
+
 export default function TripMap({ items }: { items: [string, ItineraryItem][] }) {
   const [myPos, setMyPos] = useState<[number, number] | null>(null)
+  const [expanded, setExpanded] = useState(false)
 
   useEffect(() => {
     if (!navigator.geolocation) return
@@ -45,15 +55,25 @@ export default function TripMap({ items }: { items: [string, ItineraryItem][] })
       {/* 지도 상단 라벨 */}
       <div className="flex items-center justify-between border-b border-dashed border-line bg-card px-3 py-1.5">
         <span className="font-display text-[12px] tracking-[0.25em] text-indigo">旅程地圖 · MAP</span>
-        <span className="text-[10px] tracking-wider text-sub">{markers.length}곳 표시됨</span>
+        <div className="flex items-center gap-2.5">
+          <span className="text-[10px] tracking-wider text-sub">{markers.length}곳 표시됨</span>
+          <button
+            type="button"
+            onClick={() => setExpanded(x => !x)}
+            className="font-display text-[11px] tracking-wider text-accent"
+          >
+            {expanded ? '접기 ▴' : '펼치기 ▾'}
+          </button>
+        </div>
       </div>
-      <div className="relative h-72">
+      <div className={`relative transition-[height] duration-300 ${expanded ? 'h-[62dvh]' : 'h-52'}`}>
         <MapContainer center={TOKYO} zoom={12} className="h-full w-full">
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
           <FitBounds points={points} />
+          <Revalidate dep={expanded} />
           {markers.map(([id, it]) => (
             <Marker key={id} position={[it.lat!, it.lng!]}>
               <Popup>

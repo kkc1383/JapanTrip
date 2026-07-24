@@ -1,6 +1,9 @@
 import { push, ref, remove, update } from 'firebase/database'
 import { useState, type FormEvent } from 'react'
+import ActionMenu from '../../components/ActionMenu'
+import BottomSheet from '../../components/BottomSheet'
 import DayTabs from '../../components/DayTabs'
+import Fab from '../../components/Fab'
 import PlaceSearchInput, { type Coords } from '../../components/PlaceSearchInput'
 import { db } from '../../lib/firebase'
 import { placeSearchUrl } from '../../lib/googleMaps'
@@ -11,6 +14,7 @@ import type { DayKey, ItineraryItem } from '../../types'
 export default function ItinerarySection() {
   const data = useRtdbValue<Partial<Record<DayKey, Record<string, ItineraryItem>>>>('itinerary')
   const [day, setDay] = useState<DayKey>('day1')
+  const [sheetOpen, setSheetOpen] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [time, setTime] = useState('')
   const [title, setTitle] = useState('')
@@ -31,6 +35,16 @@ export default function ItinerarySection() {
     setFormEpoch(e => e + 1)
   }
 
+  function closeSheet() {
+    setSheetOpen(false)
+    resetForm()
+  }
+
+  function openAdd() {
+    resetForm()
+    setSheetOpen(true)
+  }
+
   function startEdit(id: string, it: ItineraryItem) {
     setEditingId(id)
     setTime(it.time ?? '')
@@ -38,6 +52,7 @@ export default function ItinerarySection() {
     setPlace(it.place ?? '')
     setMemo(it.memo ?? '')
     setCoords(it.lat != null && it.lng != null ? { lat: it.lat, lng: it.lng } : null)
+    setSheetOpen(true)
   }
 
   function swapOrder(i: number, j: number) {
@@ -67,18 +82,17 @@ export default function ItinerarySection() {
       const maxOrder = items.reduce((m, [, it]) => Math.max(m, it.order ?? 0), -1)
       push(ref(db, `itinerary/${day}`), { ...item, order: maxOrder + 1 })
     }
-    resetForm()
+    closeSheet()
   }
 
   return (
     <div className="space-y-3.5">
       <DayTabs day={day} onChange={d => { setDay(d); resetForm() }} />
       {!items.length && (
-        <p className="empty-box">아직 일정이 없어요 — 아래에서 첫 일정을 추가해 보세요</p>
+        <p className="empty-box">아직 일정이 없어요 — 오른쪽 아래 ＋ 버튼으로 추가해 보세요</p>
       )}
       {items.map(([id, it], idx) => (
         <div key={id} className="card flex items-stretch overflow-hidden">
-          {/* 시간 컬럼 */}
           <div className="flex w-[64px] shrink-0 flex-col items-center justify-center border-r border-dashed border-line bg-accent-soft/40 py-3">
             <span className="font-display text-[15px] text-accent">{it.time || '—'}</span>
             <span className="mt-0.5 text-[9px] tracking-[0.25em] text-sub">No.{String(idx + 1).padStart(2, '0')}</span>
@@ -98,43 +112,45 @@ export default function ItinerarySection() {
             )}
             {it.memo && <div className="mt-1.5 text-[12px] leading-relaxed whitespace-pre-wrap text-ink/75">{it.memo}</div>}
           </div>
-          <div className="flex flex-col items-center justify-center gap-1 border-l border-dashed border-line px-2 text-[12px] text-sub/70">
-            <button disabled={idx === 0} onClick={() => swapOrder(idx, idx - 1)} className="transition-colors hover:text-accent disabled:opacity-25">▲</button>
-            <button disabled={idx === items.length - 1} onClick={() => swapOrder(idx, idx + 1)} className="transition-colors hover:text-accent disabled:opacity-25">▼</button>
-            <button onClick={() => startEdit(id, it)} className="transition-colors hover:text-accent">수정</button>
-            <button
-              onClick={() => {
-                remove(ref(db, `itinerary/${day}/${id}`))
-                if (editingId === id) resetForm()
-              }}
-              className="transition-colors hover:text-accent"
-            >
-              삭제
-            </button>
+          <div className="flex items-start pt-2 pr-1.5">
+            <ActionMenu
+              actions={[
+                { label: '↑ 위로', onClick: () => swapOrder(idx, idx - 1), disabled: idx === 0 },
+                { label: '↓ 아래로', onClick: () => swapOrder(idx, idx + 1), disabled: idx === items.length - 1 },
+                { label: '수정', onClick: () => startEdit(id, it) },
+                {
+                  label: '삭제',
+                  danger: true,
+                  onClick: () => {
+                    remove(ref(db, `itinerary/${day}/${id}`))
+                    if (editingId === id) closeSheet()
+                  },
+                },
+              ]}
+            />
           </div>
         </div>
       ))}
-      <form onSubmit={submit} className="card grid gap-2 !border-dashed bg-card/60 p-3.5 !shadow-none">
-        <p className="font-display text-[12px] tracking-[0.2em] text-sub">
-          {editingId ? '일정 수정 中' : '새 일정 追加'}
-        </p>
-        <input type="time" value={time} onChange={e => setTime(e.target.value)} className="field" />
-        <input value={title} onChange={e => setTitle(e.target.value)} placeholder="일정 제목 (필수)" required className="field" />
-        <PlaceSearchInput
-          key={`${formEpoch}-${editingId ?? 'new'}`}
-          value={place}
-          coords={coords}
-          onChange={setPlace}
-          onCoords={setCoords}
-        />
-        <textarea value={memo} onChange={e => setMemo(e.target.value)} placeholder="메모" rows={2} className="field" />
-        <button type="submit" className="btn-primary">
-          {editingId ? '일정 수정' : '일정 추가'}
-        </button>
-        {editingId && (
-          <button type="button" onClick={resetForm} className="text-[13px] text-sub underline underline-offset-2">수정 취소</button>
-        )}
-      </form>
+
+      <Fab label="일정 추가" onClick={openAdd} />
+
+      <BottomSheet open={sheetOpen} title={editingId ? '일정 수정' : '새 일정'} onClose={closeSheet}>
+        <form onSubmit={submit} className="grid gap-2.5">
+          <input type="time" value={time} onChange={e => setTime(e.target.value)} className="field" />
+          <input value={title} onChange={e => setTitle(e.target.value)} placeholder="일정 제목 (필수)" required className="field" />
+          <PlaceSearchInput
+            key={`${formEpoch}-${editingId ?? 'new'}`}
+            value={place}
+            coords={coords}
+            onChange={setPlace}
+            onCoords={setCoords}
+          />
+          <textarea value={memo} onChange={e => setMemo(e.target.value)} placeholder="메모" rows={2} className="field" />
+          <button type="submit" className="btn-primary">
+            {editingId ? '일정 수정' : '일정 추가'}
+          </button>
+        </form>
+      </BottomSheet>
     </div>
   )
 }

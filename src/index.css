@@ -206,6 +206,56 @@ body::after {
   }
 
   .tab-in { animation: rise 0.35s cubic-bezier(0.2, 0.7, 0.3, 1) both; }
+
+  /* 플로팅 추가 버튼 */
+  .fab {
+    position: fixed;
+    bottom: 88px;
+    right: max(20px, calc(50vw - 18rem + 20px));
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-display);
+    font-size: 14px;
+    letter-spacing: 0.12em;
+    background: var(--color-accent);
+    color: #fff6e9;
+    border-radius: 999px;
+    padding: 12px 18px;
+    box-shadow: 3px 3px 0 color-mix(in srgb, var(--color-ink) 30%, transparent);
+    transition: transform 0.08s, box-shadow 0.08s;
+  }
+  .fab:active {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0 color-mix(in srgb, var(--color-ink) 30%, transparent);
+  }
+
+  .dim { animation: dim-in 0.2s both; }
+  .sheet { animation: sheet-up 0.28s cubic-bezier(0.2, 0.7, 0.3, 1) both; }
+
+  /* 세그먼트 컨트롤 */
+  .segment {
+    display: flex;
+    overflow: hidden;
+    border: 1px solid color-mix(in srgb, var(--color-ink) 26%, transparent);
+    border-radius: 5px;
+    background: var(--color-card);
+    box-shadow: 2px 2px 0 color-mix(in srgb, var(--color-ink) 8%, transparent);
+  }
+  .segment > button {
+    flex: 1;
+    padding: 9px 0;
+    font-family: var(--font-display);
+    font-size: 13px;
+    letter-spacing: 0.14em;
+    color: var(--color-sub);
+    transition: all 0.15s;
+  }
+  .segment > button.seg-active {
+    background: var(--color-accent);
+    color: #fff6e9;
+  }
 }
 
 /* 지도 세피아 톤 (와시 종이와 어울리게) */
@@ -220,7 +270,15 @@ body::after {
   0% { opacity: 0; transform: rotate(-24deg) scale(1.7); }
   100% { opacity: 1; transform: rotate(-8deg) scale(1); }
 }
+@keyframes dim-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes sheet-up {
+  from { opacity: 0; transform: translateY(28px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 
 @media (prefers-reduced-motion: reduce) {
-  .stagger > *, .hanko, .tab-in { animation: none !important; }
+  .stagger > *, .hanko, .tab-in, .dim, .sheet { animation: none !important; }
 }
