@@ -73,7 +73,9 @@ export default async function handler(req, res) {
     const debug =
       req.query && req.query.debug
         ? {
-            v: 4,
+            v: 5,
+            item_received: item,
+            item_codes: [...item].slice(0, 6).map(c => c.codePointAt(0).toString(16)).join(' '),
             stop: response.stop_reason,
             model: response.model,
             blocks: response.content.map(b => b.type).join(','),
